@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orbit — Construtor de Dashboards</title>
+<link rel="icon" type="image/png" href="../../marca/logo-whale.png"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400..500,0..1,0" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script id="tailwind-config">
+  tailwind.config = { theme: { extend: {
+    colors: { ink:"#0b1120", muted:"#5b6178", faint:"#94a0c0", line:"#e4e7f6", surface:"#f7f8fd", "surface-2":"#eef0fa", card:"#ffffff",
+      primary:"#1f0faf", "primary-dark":"#170b86", "primary-soft":"#ecebfd", accent:"#7c3aed", "accent-soft":"#f2ebfe",
+      success:"#059669", "success-soft":"#e7f8f1", warning:"#d97706", "warning-soft":"#fef3e0", danger:"#dc2626", "danger-soft":"#fdeaea" },
+    fontFamily: { sans:["Sora","sans-serif"], mono:["JetBrains Mono","monospace"] } } } };
+</script>
+<style>
+  * { font-family: 'Sora', sans-serif; }
+  code, .font-mono { font-family: 'JetBrains Mono', monospace; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #d7dcf0; border-radius: 4px; }
+  [data-tabpanel] { display: none !important; } [data-tabpanel].is-active { display: flex !important; }
+  button, .navlink, a[href], [role="button"], select, summary, .tab-btn, .widget-item { cursor: pointer; }
+  input[type="checkbox"], input[type="radio"] { cursor: pointer; }
+  @keyframes skel-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .skel { background: linear-gradient(90deg,#eef0fa,#e2e6f8,#eef0fa); background-size: 200% 100%; animation: skel-shimmer 1.4s ease-in-out infinite; }
+  #skel-overlay { transition: opacity .35s ease; }
+</style>
+<style type="text/tailwindcss">
+  @layer components {
+    .card { @apply bg-card border border-line rounded-xl p-5; }
+    .eyebrow { @apply text-[11px] font-semibold uppercase tracking-wider text-faint; }
+    .btn { @apply inline-flex items-center justify-center gap-2 text-sm font-medium rounded-lg px-3.5 h-9 transition-colors whitespace-nowrap select-none disabled:opacity-60; }
+    .btn-primary { @apply btn bg-primary text-white hover:bg-primary-dark shadow-sm; }
+    .btn-secondary { @apply btn bg-white border border-line text-ink hover:bg-surface-2; }
+    .badge { @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap; }
+    .tab-btn { @apply px-3.5 h-9 inline-flex items-center text-sm font-medium rounded-lg transition-colors whitespace-nowrap; }
+    .tab-active { @apply bg-primary text-white shadow-sm; } .tab-inactive { @apply text-muted hover:text-ink hover:bg-surface-2; }
+    .navlink { @apply flex items-center gap-3 px-3 h-10 rounded-lg text-sm font-medium transition-colors; }
+    .navlink-active { @apply bg-primary text-white shadow-sm; } .navlink-inactive { @apply text-muted hover:bg-surface-2 hover:text-ink; }
+    .icon { font-family: 'Material Symbols Outlined'; font-size: 20px; line-height: 1; }
+    .spinner { @apply inline-block w-4 h-4 border-2 border-current/25 border-t-current rounded-full animate-spin align-[-3px]; }
+    .navgroup { @apply px-3 pt-4 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-faint; }
+    .widget-item { @apply flex items-center gap-2.5 p-2.5 rounded-lg border border-line hover:border-primary/40 hover:bg-surface-2 transition-colors; }
+  }
+</style>
+</head>
+<body class="bg-surface text-ink text-sm antialiased">
+
+<div id="skel-overlay" class="fixed inset-0 z-[200] bg-surface flex" aria-hidden="true">
+  <div class="w-60 shrink-0 border-r border-line p-4 flex flex-col gap-2.5"><div class="skel h-8 w-24 rounded-lg mb-4"></div><div class="skel h-9 rounded-lg"></div><div class="skel h-9 rounded-lg"></div></div>
+  <div class="flex-1 p-6 flex flex-col gap-4"><div class="skel h-9 w-64 rounded-lg"></div><div class="grid grid-cols-2 gap-4"><div class="skel h-32 rounded-xl"></div><div class="skel h-32 rounded-xl"></div></div></div>
+</div>
+
+<div class="flex min-h-screen">
+  <aside class="w-60 shrink-0 fixed top-0 bottom-0 left-0 bg-card border-r border-line flex flex-col z-40">
+    <a href="../../index.html" class="h-16 px-5 flex items-center gap-2.5 border-b border-line shrink-0 no-underline">
+      <img src="../../marca/logo-whale.png" alt="Orbit" class="h-8 w-auto"/><span class="text-base font-bold tracking-tight text-ink">Orbit</span>
+    </a>
+    <nav class="flex flex-col gap-1 px-3 flex-1 overflow-y-auto pb-3">
+      <div class="navgroup">Principal</div>
+      <a class="navlink navlink-inactive" href="../dashboard/dashboard.html"><span class="icon">space_dashboard</span> Dashboard</a>
+      <a class="navlink navlink-inactive" href="../integracoes/integracoes.html"><span class="icon">hub</span> Integrações <span class="ml-auto text-[11px] font-mono text-faint">5</span></a>
+      <a class="navlink navlink-inactive" href="../documentos/documentos.html"><span class="icon">description</span> Documentos</a>
+      <a class="navlink navlink-active" href="construtor.html"><span class="icon">dashboard_customize</span> Construtor</a>
+      <a class="navlink navlink-inactive" href="../automacoes/automacoes.html"><span class="icon">account_tree</span> Automações</a>
+      <a class="navlink navlink-inactive" href="../orbit-ai/orbit-ai.html"><span class="icon">auto_awesome</span> Orbit AI</a>
+      <div class="navgroup">Workspace</div>
+      <a class="navlink navlink-inactive" href="../equipe/equipe.html"><span class="icon">group</span> Equipe</a>
+      <a class="navlink navlink-inactive" href="../notificacoes/notificacoes.html"><span class="icon">notifications</span> Notificações <span class="ml-auto text-[11px] font-mono bg-danger text-white rounded-full px-1.5">3</span></a>
+      <a class="navlink navlink-inactive" href="../configuracoes/configuracoes.html"><span class="icon">settings</span> Configurações</a>
+    </nav>
+    <div class="p-3 border-t border-line">
+      <button class="w-full flex items-center gap-2.5 p-2.5 rounded-lg bg-surface-2 hover:bg-surface-2/70 transition-colors text-left" onclick="toast('Menu de conta em breve','info')">
+        <img alt="Mariana Silva" class="w-8 h-8 rounded-full object-cover shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7Qkz1Tv4EfpRyRShckeOEcIZfnuvs-A9PpC8fBVvdqp_9b5vHxNriuq1T0e1Qwkn0smbc05WQOqKKhZNKsVXWrT9neXi62dis42MDRAgQ2QLIWFLqY5D_sXAXclM6e2v4ol0EmoViSlkJ_dFXqe89kuu3Ze-dLVivwu4xzthInrgZoLo0ChWXOw_R_AKQ0-FLEQS-sI2AeYZatgEX27IPquNiuIpoqgnXLU-eSTFx2lm6gsGazaNO"/>
+        <div class="min-w-0 flex-1"><div class="text-xs font-semibold text-ink truncate">Mariana Silva</div><div class="text-[11px] text-faint truncate">Diretora de Operações</div></div>
+        <span class="icon text-[18px] text-faint">unfold_more</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="pl-60 flex-1 flex flex-col min-w-0">
+
+    <header class="h-16 border-b border-line bg-card sticky top-0 z-30 px-6 flex items-center gap-4">
+      <button class="w-9 h-9 rounded-lg hover:bg-surface-2 text-muted flex items-center justify-center transition-colors" aria-label="Voltar" onclick="location.href='../dashboard/dashboard.html'"><span class="icon">arrow_back</span></button>
+      <div class="min-w-0"><div class="text-sm font-semibold truncate">Dashboard de Performance de Vendas</div><div class="text-[11px] text-faint" id="save-status">Rascunho · salvo há 14s</div></div>
+      <div class="ml-auto flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-1 bg-surface-2 p-1 rounded-lg">
+          <button class="w-7 h-7 rounded-md flex items-center justify-center text-ink bg-white shadow-sm" onclick="toast('Prévia desktop','info')"><span class="icon text-[16px]">desktop_windows</span></button>
+          <button class="w-7 h-7 rounded-md flex items-center justify-center text-muted hover:text-ink" onclick="toast('Prévia tablet','info')"><span class="icon text-[16px]">tablet_mac</span></button>
+        </div>
+        <button class="btn-secondary !h-9" type="button" onclick="mockAction(this,'Abrindo pré-visualização em nova aba')"><span class="icon text-[16px]">visibility</span> Pré-visualizar</button>
+        <button class="btn-primary !h-9" type="button" onclick="mockAction(this,'Dashboard publicado com sucesso',{loadingText:'Publicando...',delay:1200})"><span class="icon text-[16px]">publish</span> Publicar</button>
+      </div>
+    </header>
+
+    <div class="flex flex-1 min-h-0">
+
+      <div class="w-64 shrink-0 border-r border-line bg-card flex flex-col">
+        <div class="p-3 border-b border-line">
+          <div class="flex items-center gap-1 bg-surface-2 p-1 rounded-lg">
+            <button class="tab-btn tab-active !h-8 flex-1 justify-center text-xs" data-tab="widgets" onclick="setLeftTab('widgets')">Widgets</button>
+            <button class="tab-btn tab-inactive !h-8 flex-1 justify-center text-xs" data-tab="dados" onclick="setLeftTab('dados')">Fontes</button>
+            <button class="tab-btn tab-inactive !h-8 flex-1 justify-center text-xs" data-tab="templates" onclick="setLeftTab('templates')">Modelos</button>
+          </div>
+        </div>
+
+        <div class="p-3 flex flex-col gap-4 overflow-y-auto">
+          <div data-tabpanel="widgets" class="is-active flex flex-col gap-4">
+            <div class="flex flex-col gap-2"><span class="eyebrow">KPIs &amp; Métricas</span>
+              <div class="widget-item" onclick="addWidget('KPI de valor único')"><span class="icon text-primary text-[18px]">speed</span><span class="text-xs font-medium">Card de valor único</span></div>
+              <div class="widget-item" onclick="addWidget('Meta e progresso')"><span class="icon text-primary text-[18px]">bar_chart</span><span class="text-xs font-medium">Meta &amp; progresso</span></div>
+              <div class="widget-item" onclick="addWidget('Comparativo período')"><span class="icon text-primary text-[18px]">compare_arrows</span><span class="text-xs font-medium">Comparativo MoM/YoY</span></div>
+            </div>
+            <div class="flex flex-col gap-2"><span class="eyebrow">Gráficos</span>
+              <div class="widget-item" onclick="addWidget('Linha temporal')"><span class="icon text-primary text-[18px]">show_chart</span><span class="text-xs font-medium">Linha temporal</span></div>
+              <div class="widget-item" onclick="addWidget('Barras')"><span class="icon text-primary text-[18px]">bar_chart</span><span class="text-xs font-medium">Barras / colunas</span></div>
+              <div class="widget-item" onclick="addWidget('Funil')"><span class="icon text-primary text-[18px]">filter_alt</span><span class="text-xs font-medium">Funil de conversão</span></div>
+              <div class="widget-item" onclick="addWidget('Pizza')"><span class="icon text-primary text-[18px]">pie_chart</span><span class="text-xs font-medium">Distribuição (pizza)</span></div>
+            </div>
+            <div class="flex flex-col gap-2"><span class="eyebrow">Tabelas</span>
+              <div class="widget-item" onclick="addWidget('Tabela com filtros')"><span class="icon text-primary text-[18px]">table_rows</span><span class="text-xs font-medium">Tabela com filtros</span></div>
+            </div>
+            <div class="flex flex-col gap-2"><span class="eyebrow">Orbit AI</span>
+              <div class="widget-item border-accent/30" onclick="addWidget('Forecast com IA')"><span class="icon text-accent text-[18px]">auto_awesome</span><span class="text-xs font-medium">Forecast com IA</span></div>
+              <div class="widget-item border-accent/30" onclick="addWidget('Alertas automatizados')"><span class="icon text-accent text-[18px]">notifications_active</span><span class="text-xs font-medium">Alertas automatizados</span></div>
+            </div>
+          </div>
+          <div data-tabpanel="dados" class="flex flex-col gap-2">
+            <div class="widget-item"><span class="icon text-primary text-[18px]">database</span><span class="text-xs font-medium">PostgreSQL (Prod)</span><span class="ml-auto badge bg-success-soft text-success !py-0.5">ativo</span></div>
+            <div class="widget-item"><span class="icon text-success text-[18px]">table_chart</span><span class="text-xs font-medium">Google Sheets</span><span class="ml-auto badge bg-success-soft text-success !py-0.5">ativo</span></div>
+            <div class="widget-item"><span class="icon text-accent text-[18px]">webhook</span><span class="text-xs font-medium">Stripe API</span><span class="ml-auto badge bg-success-soft text-success !py-0.5">ativo</span></div>
+            <div class="widget-item"><span class="icon text-muted text-[18px]">api</span><span class="text-xs font-medium">CRM Hubspot</span><span class="ml-auto badge bg-success-soft text-success !py-0.5">ativo</span></div>
+            <button class="btn-secondary !h-8 text-xs w-full mt-1" onclick="location.href='../integracoes/integracoes.html'">Gerenciar fontes</button>
+          </div>
+          <div data-tabpanel="templates" class="flex flex-col gap-2">
+            <div class="widget-item" onclick="mockAction(this,'Modelo \'Vendas & Marketing\' aplicado')"><span class="icon text-primary text-[18px]">storefront</span><span class="text-xs font-medium">Vendas &amp; Marketing</span></div>
+            <div class="widget-item" onclick="mockAction(this,'Modelo \'Financeiro Executivo\' aplicado')"><span class="icon text-primary text-[18px]">account_balance</span><span class="text-xs font-medium">Financeiro Executivo</span></div>
+            <div class="widget-item" onclick="mockAction(this,'Modelo \'Operações & SLA\' aplicado')"><span class="icon text-primary text-[18px]">precision_manufacturing</span><span class="text-xs font-medium">Operações &amp; SLA</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 min-w-0 overflow-auto bg-surface-2/50 p-6">
+        <div class="max-w-[1100px] mx-auto flex flex-col gap-4" id="canvas">
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="card !p-4 ring-2 ring-primary cursor-pointer" onclick="selectWidget(this,'Receita','Receita Total (Mês)')">
+              <div class="eyebrow mb-1">Receita Total (Mês)</div>
+              <div class="flex items-baseline gap-2"><span class="text-2xl font-semibold font-mono">R$ 482.950</span><span class="badge bg-success-soft text-success">+14.8%</span></div>
+              <div class="w-full h-1.5 rounded-full bg-surface-2 mt-3 overflow-hidden"><div class="bg-primary h-full" style="width:96%"></div></div>
+              <div class="text-[11px] text-muted mt-1">Meta: R$ 450.000 · 107% atingido</div>
+            </div>
+            <div class="card !p-4 cursor-pointer" onclick="selectWidget(this,'Projeção','Projeção IA — Fechamento')">
+              <div class="flex items-center justify-between mb-1"><span class="eyebrow">Projeção IA — Fechamento</span><span class="badge bg-accent-soft text-accent">94%</span></div>
+              <span class="text-2xl font-semibold font-mono">R$ 535.200</span>
+              <p class="text-[11px] text-muted mt-1">Tendência positiva com base em sazonalidade e pipeline atual.</p>
+            </div>
+          </div>
+
+          <div class="card !p-4 cursor-pointer" onclick="selectWidget(this,'Gráfico','Vendas Diárias × Meta')">
+            <div class="flex items-center justify-between mb-3">
+              <div><h3 class="text-sm font-semibold">Vendas Diárias × Meta</h3><p class="text-xs text-muted">Últimos 30 dias vs. baseline contratual.</p></div>
+              <div class="flex items-center gap-1 bg-surface-2 p-1 rounded-lg" onclick="event.stopPropagation()">
+                <button class="tab-btn tab-active !h-7 text-xs">Realizado</button>
+                <button class="tab-btn tab-inactive !h-7 text-xs">Meta Fixa</button>
+              </div>
+            </div>
+            <svg class="w-full h-32" preserveAspectRatio="none" viewBox="0 0 800 120">
+              <line x1="0" x2="800" y1="30" y2="30" stroke="#eef0fa" stroke-width="1" stroke-dasharray="4 4"/>
+              <line x1="0" x2="800" y1="80" y2="80" stroke="#eef0fa" stroke-width="1" stroke-dasharray="4 4"/>
+              <polyline fill="none" points="0,90 100,85 200,70 300,75 400,55 500,60 600,35 700,25 800,15" stroke="#1f0faf" stroke-width="3"/>
+              <circle cx="800" cy="15" r="5" fill="#1f0faf" stroke="#fff" stroke-width="2"/>
+            </svg>
+          </div>
+
+          <button class="border-2 border-dashed border-line rounded-xl py-8 flex flex-col items-center gap-2 text-muted hover:border-primary/40 hover:text-primary transition-colors" onclick="toast('Selecione um widget na coluna à esquerda','info')">
+            <span class="icon text-[24px]">add_circle</span><span class="text-sm font-medium">Arraste um widget aqui ou clique para adicionar</span>
+          </button>
+
+        </div>
+      </div>
+
+      <aside class="w-72 shrink-0 border-l border-line bg-card p-4 flex flex-col gap-4 overflow-y-auto">
+        <div class="flex items-center justify-between"><h3 class="text-sm font-semibold">Propriedades</h3><span class="badge bg-primary-soft text-primary" id="prop-badge">Receita</span></div>
+
+        <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">Título do widget</span><input id="prop-title" type="text" value="Receita Total (Mês)" class="h-9 px-3 bg-surface-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" oninput="applyTitle(this.value)"/></label>
+
+        <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">Fonte de dados</span>
+          <select class="h-9 px-3 bg-surface-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"><option>PostgreSQL (Prod) → orders</option><option>Google Sheets → Orçamento</option><option>Stripe API → charges</option></select>
+        </label>
+
+        <div class="grid grid-cols-2 gap-3">
+          <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">Eixo X</span><input type="text" value="data_fechamento" class="h-9 px-3 bg-surface-2 rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+          <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">Eixo Y</span><input type="text" value="valor_total" class="h-9 px-3 bg-surface-2 rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+        </div>
+
+        <div class="flex flex-col gap-2 pt-2 border-t border-line">
+          <span class="text-xs font-medium text-muted">Estilo</span>
+          <label class="flex items-center justify-between text-sm"><span>Curva suave</span><input type="checkbox" checked class="rounded text-primary focus:ring-primary/30"/></label>
+          <label class="flex items-center justify-between text-sm"><span>Preenchimento de área</span><input type="checkbox" checked class="rounded text-primary focus:ring-primary/30"/></label>
+          <label class="flex items-center justify-between text-sm"><span>Linha de meta</span><input type="checkbox" class="rounded text-primary focus:ring-primary/30"/></label>
+        </div>
+
+        <div class="flex flex-col gap-2 pt-2 border-t border-line mt-auto">
+          <button class="btn-secondary !h-9 w-full" onclick="mockAction(this,'Widget duplicado')"><span class="icon text-[16px]">content_copy</span> Duplicar</button>
+          <button class="btn-secondary !h-9 w-full !text-danger !border-danger/30 hover:!bg-danger-soft" onclick="mockAction(this,'Widget removido')"><span class="icon text-[16px]">delete</span> Remover</button>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast-root" class="fixed bottom-5 right-5 z-[300] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<script>
+  window.addEventListener('load', function () { setTimeout(function () { var el = document.getElementById('skel-overlay'); if (!el) return; el.style.opacity = '0'; setTimeout(function () { el.remove(); }, 350); }, 550); });
+  function toast(message, type) {
+    type = type || 'success';
+    var root = document.getElementById('toast-root'); var el = document.createElement('div');
+    var colors = { success: 'bg-success text-white', error: 'bg-danger text-white', info: 'bg-primary text-white' };
+    var icons = { success: 'check_circle', error: 'error', info: 'info' };
+    el.className = 'pointer-events-auto px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium flex items-center gap-2 ' + (colors[type] || colors.success);
+    el.style.cssText = 'opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;';
+    el.innerHTML = '<span class="icon text-[16px]">' + (icons[type] || icons.success) + '</span><span>' + message + '</span>';
+    root.appendChild(el);
+    requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+    setTimeout(function () { el.style.opacity = '0'; el.style.transform = 'translateY(6px)'; setTimeout(function () { el.remove(); }, 300); }, 3000);
+  }
+  function mockAction(btn, message, opts) {
+    opts = opts || {}; if (btn.dataset.loading === '1') return;
+    btn.dataset.loading = '1'; var original = btn.innerHTML; btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>' + (opts.loadingText ? '<span>' + opts.loadingText + '</span>' : '<span>Processando...</span>');
+    setTimeout(function () { btn.innerHTML = original; btn.disabled = false; btn.dataset.loading = '0'; if (message) toast(message, opts.type); if (opts.after) opts.after(); }, opts.delay || 900);
+  }
+  function setLeftTab(name) {
+    document.querySelectorAll('[data-tabpanel]').forEach(function (el) { el.classList.toggle('is-active', el.dataset.tabpanel === name); });
+    document.querySelectorAll('[data-tab]').forEach(function (btn) { var active = btn.dataset.tab === name; btn.classList.toggle('tab-active', active); btn.classList.toggle('tab-inactive', !active); });
+  }
+  var selectedEl = null;
+  function selectWidget(el, badge, title) {
+    if (selectedEl) selectedEl.classList.remove('ring-2', 'ring-primary');
+    el.classList.add('ring-2', 'ring-primary'); selectedEl = el;
+    document.getElementById('prop-badge').textContent = badge;
+    document.getElementById('prop-title').value = title;
+  }
+  function applyTitle(val) {
+    if (!selectedEl) return;
+    var h = selectedEl.querySelector('.eyebrow, h3');
+    if (h) h.textContent = val;
+    document.getElementById('save-status').textContent = 'Rascunho · salvo agora';
+  }
+  function addWidget(name) {
+    toast('Widget "' + name + '" adicionado ao canvas', 'success');
+    document.getElementById('canvas').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>

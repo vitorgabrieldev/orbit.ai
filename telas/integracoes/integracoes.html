@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orbit — Integrações</title>
+<link rel="icon" type="image/png" href="../../marca/logo-whale.png"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400..500,0..1,0" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script id="tailwind-config">
+  tailwind.config = { theme: { extend: {
+    colors: { ink:"#0b1120", muted:"#5b6178", faint:"#94a0c0", line:"#e4e7f6", surface:"#f7f8fd", "surface-2":"#eef0fa", card:"#ffffff",
+      primary:"#1f0faf", "primary-dark":"#170b86", "primary-soft":"#ecebfd", accent:"#7c3aed", "accent-soft":"#f2ebfe",
+      success:"#059669", "success-soft":"#e7f8f1", warning:"#d97706", "warning-soft":"#fef3e0", danger:"#dc2626", "danger-soft":"#fdeaea" },
+    fontFamily: { sans:["Sora","sans-serif"], mono:["JetBrains Mono","monospace"] } } } };
+</script>
+<style>
+  * { font-family: 'Sora', sans-serif; }
+  code, .font-mono { font-family: 'JetBrains Mono', monospace; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #d7dcf0; border-radius: 4px; }
+  [data-tabpanel] { display: none !important; } [data-tabpanel].is-active { display: flex !important; }
+  button, .navlink, a[href], [role="button"], select, summary, .tab-btn { cursor: pointer; }
+  input[type="checkbox"], input[type="radio"] { cursor: pointer; }
+  th[data-sort] { cursor: pointer; user-select: none; }
+  .switch, .doc-card, .notif, .widget-item { cursor: pointer; }
+  @keyframes skel-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .skel { background: linear-gradient(90deg,#eef0fa,#e2e6f8,#eef0fa); background-size: 200% 100%; animation: skel-shimmer 1.4s ease-in-out infinite; }
+  #skel-overlay { transition: opacity .35s ease; }
+</style>
+<style type="text/tailwindcss">
+  @layer components {
+    .card { @apply bg-card border border-line rounded-xl p-5; }
+    .eyebrow { @apply text-[11px] font-semibold uppercase tracking-wider text-faint; }
+    .btn { @apply inline-flex items-center justify-center gap-2 text-sm font-medium rounded-lg px-3.5 h-9 transition-colors whitespace-nowrap select-none disabled:opacity-60; }
+    .btn-primary { @apply btn bg-primary text-white hover:bg-primary-dark shadow-sm; }
+    .btn-secondary { @apply btn bg-white border border-line text-ink hover:bg-surface-2; }
+    .badge { @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap; }
+    .tab-btn { @apply px-3.5 h-9 inline-flex items-center text-sm font-medium rounded-lg transition-colors whitespace-nowrap; }
+    .tab-active { @apply bg-primary text-white shadow-sm; } .tab-inactive { @apply text-muted hover:text-ink hover:bg-surface-2; }
+    .navlink { @apply flex items-center gap-3 px-3 h-10 rounded-lg text-sm font-medium transition-colors; }
+    .navlink-active { @apply bg-primary text-white shadow-sm; } .navlink-inactive { @apply text-muted hover:bg-surface-2 hover:text-ink; }
+    .icon { font-family: 'Material Symbols Outlined'; font-size: 20px; line-height: 1; }
+    .spinner { @apply inline-block w-4 h-4 border-2 border-current/25 border-t-current rounded-full animate-spin align-[-3px]; }
+    .navgroup { @apply px-3 pt-4 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-faint; }
+    .switch { @apply relative inline-flex h-5 w-9 items-center rounded-full transition-colors; }
+  }
+</style>
+</head>
+<body class="bg-surface text-ink text-sm antialiased">
+
+<div id="skel-overlay" class="fixed inset-0 z-[200] bg-surface flex" aria-hidden="true">
+  <div class="w-60 shrink-0 border-r border-line p-4 flex flex-col gap-2.5"><div class="skel h-8 w-24 rounded-lg mb-4"></div><div class="skel h-9 rounded-lg"></div><div class="skel h-9 rounded-lg"></div><div class="skel h-9 rounded-lg"></div></div>
+  <div class="flex-1 p-6 flex flex-col gap-4"><div class="skel h-9 w-64 rounded-lg"></div><div class="grid grid-cols-4 gap-4"><div class="skel h-24 rounded-xl"></div><div class="skel h-24 rounded-xl"></div><div class="skel h-24 rounded-xl"></div><div class="skel h-24 rounded-xl"></div></div><div class="skel h-64 rounded-xl"></div></div>
+</div>
+
+<div class="flex min-h-screen">
+  <aside class="w-60 shrink-0 fixed top-0 bottom-0 left-0 bg-card border-r border-line flex flex-col z-40">
+    <a href="../../index.html" class="h-16 px-5 flex items-center gap-2.5 border-b border-line shrink-0 no-underline">
+      <img src="../../marca/logo-whale.png" alt="Orbit" class="h-8 w-auto"/><span class="text-base font-bold tracking-tight text-ink">Orbit</span>
+    </a>
+    <nav class="flex flex-col gap-1 px-3 flex-1 overflow-y-auto pb-3">
+      <div class="navgroup">Principal</div>
+      <a class="navlink navlink-inactive" href="../dashboard/dashboard.html"><span class="icon">space_dashboard</span> Dashboard</a>
+      <a class="navlink navlink-active" href="integracoes.html"><span class="icon">hub</span> Integrações <span class="ml-auto text-[11px] font-mono opacity-80">5</span></a>
+      <a class="navlink navlink-inactive" href="../documentos/documentos.html"><span class="icon">description</span> Documentos</a>
+      <a class="navlink navlink-inactive" href="../construtor/construtor.html"><span class="icon">dashboard_customize</span> Construtor</a>
+      <a class="navlink navlink-inactive" href="../automacoes/automacoes.html"><span class="icon">account_tree</span> Automações</a>
+      <a class="navlink navlink-inactive" href="../orbit-ai/orbit-ai.html"><span class="icon">auto_awesome</span> Orbit AI</a>
+      <div class="navgroup">Workspace</div>
+      <a class="navlink navlink-inactive" href="../equipe/equipe.html"><span class="icon">group</span> Equipe</a>
+      <a class="navlink navlink-inactive" href="../notificacoes/notificacoes.html"><span class="icon">notifications</span> Notificações <span class="ml-auto text-[11px] font-mono bg-danger text-white rounded-full px-1.5">3</span></a>
+      <a class="navlink navlink-inactive" href="../configuracoes/configuracoes.html"><span class="icon">settings</span> Configurações</a>
+    </nav>
+    <div class="p-3 border-t border-line">
+      <button class="w-full flex items-center gap-2.5 p-2.5 rounded-lg bg-surface-2 hover:bg-surface-2/70 transition-colors text-left" onclick="toast('Menu de conta em breve','info')">
+        <img alt="Dev Ops Lead" class="w-8 h-8 rounded-full object-cover shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1XnDDSQQKzSqBQ09jmBObLSouOpyxU4qhUifZdx428BUvIaDP_YafgDp0CdOULMx39Vy3IZZDBSDkJAgZYlGcyGWJiOuYPRCLgEpqqsNDph3VyAvIBMGKwjIoA15E-nhsuSxApDTmnqHSp8u8mvsaG_2ZoRibJYG_VDCh3ErcyhhnJdBdO1vAkZ6nF4ftSGgVTZgxyova9CHNpCh1LAtvSIpv32744OBHJ6BNSZcrnrQM4yDvbKQDmdxlc"/>
+        <div class="min-w-0 flex-1"><div class="text-xs font-semibold text-ink truncate">Dev Ops Lead</div><div class="text-[11px] text-faint truncate font-mono">admin@orbit.io</div></div>
+        <span class="icon text-[18px] text-faint">unfold_more</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="pl-60 flex-1 flex flex-col min-w-0">
+    <header class="h-16 border-b border-line bg-card/90 backdrop-blur sticky top-0 z-30 px-6 flex items-center gap-4">
+      <div class="relative flex-1 max-w-md">
+        <span class="icon absolute left-3 top-1/2 -translate-y-1/2 text-faint text-[18px]">search</span>
+        <input type="text" placeholder="Buscar conectores, webhooks ou schemas..." class="w-full h-9 pl-9 pr-3 bg-surface-2 rounded-lg text-sm placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+      </div>
+      <div class="ml-auto flex items-center gap-3">
+        <span class="hidden lg:flex items-center gap-1.5 text-xs text-muted font-mono"><span class="w-1.5 h-1.5 rounded-full bg-success"></span> cluster EU-West-1 · 99.99%</span>
+        <button class="relative w-9 h-9 rounded-lg hover:bg-surface-2 text-muted flex items-center justify-center transition-colors" aria-label="Notificações" onclick="location.href='../notificacoes/notificacoes.html'">
+          <span class="icon text-[20px]">notifications</span><span class="absolute top-2 right-2 w-1.5 h-1.5 bg-danger rounded-full"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="p-6 flex flex-col gap-5 w-full">
+
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0"><h1 class="text-xl font-semibold tracking-tight truncate">Hub de Integrações</h1><span class="badge bg-success-soft text-success"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>24/24 online</span></div>
+        <div class="flex items-center gap-2">
+          <button class="btn-secondary" type="button" onclick="mockAction(this,'Varredura concluída — nenhuma anomalia',{loadingText:'Varrendo...',delay:1200})"><span class="icon text-[16px]">sync</span> Forçar varredura</button>
+          <button class="btn-primary" type="button" onclick="openModal('modal-conectar')"><span class="icon text-[16px]">add_link</span> Conectar fonte</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Conexões ativas</span><span class="text-xl font-semibold font-mono">24</span><span class="text-xs text-muted">16 DBs · 8 APIs/Webhooks</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Latência média E2E</span><span class="text-xl font-semibold font-mono">42ms</span><span class="text-xs text-success">-4ms vs ontem</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">SLA de sucesso</span><span class="text-xl font-semibold font-mono">99.94%</span><span class="text-xs text-muted">14.8M eventos hoje</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Falhas 24h</span><span class="text-xl font-semibold font-mono text-success">0</span><span class="text-xs text-muted">auto-recuperação ativa</span></div>
+      </div>
+
+      <div class="flex items-start gap-2.5 p-3 rounded-lg bg-accent-soft">
+        <span class="icon text-accent text-[18px] shrink-0">auto_awesome</span>
+        <p class="text-xs text-ink leading-relaxed flex-1"><strong class="text-accent">Orbit AI:</strong> 3 redundâncias de queries eliminadas nos conectores Aurora e REST — economia de 42ms de latência agregada (+18.4% throughput).</p>
+        <button class="text-xs font-semibold text-accent hover:underline shrink-0" onclick="setTab('schemas')">Ver detalhes</button>
+      </div>
+
+      <div class="flex items-center gap-1 bg-surface-2 p-1 rounded-lg w-fit overflow-x-auto">
+        <button class="tab-btn tab-active" data-tab="conectores" onclick="setTab('conectores')">Conectores</button>
+        <button class="tab-btn tab-inactive" data-tab="logs" onclick="setTab('logs')">Logs em Tempo Real</button>
+        <button class="tab-btn tab-inactive" data-tab="schemas" onclick="setTab('schemas')">Schemas &amp; Saúde</button>
+        <button class="tab-btn tab-inactive" data-tab="catalogo" onclick="setTab('catalogo')">Catálogo</button>
+      </div>
+
+      <!-- TAB: Conectores -->
+      <div data-tabpanel="conectores" class="is-active flex flex-col gap-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-2" id="conn-filters">
+            <button class="tab-btn tab-active !h-8 text-xs" data-filter="todos" onclick="filterConnectors('todos')">Todos (8)</button>
+            <button class="tab-btn tab-inactive !h-8 text-xs" data-filter="banco" onclick="filterConnectors('banco')">Bancos (3)</button>
+            <button class="tab-btn tab-inactive !h-8 text-xs" data-filter="api" onclick="filterConnectors('api')">APIs (3)</button>
+            <button class="tab-btn tab-inactive !h-8 text-xs" data-filter="webhook" onclick="filterConnectors('webhook')">Webhooks (2)</button>
+          </div>
+          <input type="text" placeholder="Filtrar por nome..." class="h-8 px-3 bg-surface-2 rounded-lg text-xs placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-primary/30 w-56" oninput="filterConnByName(this)"/>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4" id="conn-grid">
+          <div class="card flex flex-col gap-3 conn-item" data-type="banco">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0"><div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0"><span class="icon text-[18px]">database</span></div><div class="min-w-0"><h3 class="text-sm font-semibold truncate">Produção AWS Aurora</h3><p class="text-[11px] font-mono text-faint truncate">cluster-sa-east-1.rds</p></div></div>
+              <label class="switch bg-success shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="toggleConn(this,'Produção AWS Aurora')"><span class="absolute h-4 w-4 bg-white rounded-full transition-transform translate-x-4 peer-checked:translate-x-4"></span></label>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-3 flex flex-col gap-1.5 text-xs">
+              <div class="flex justify-between"><span class="text-muted">Último sync</span><span class="font-mono">há 2 min</span></div>
+              <div class="flex justify-between"><span class="text-muted">Throughput</span><span class="font-mono text-success">3.8k ops/s</span></div>
+              <div class="flex justify-between"><span class="text-muted">Modo</span><span class="font-mono">CDC / WAL</span></div>
+            </div>
+            <button class="btn-secondary !h-8 text-xs w-full" onclick="mockAction(this,'Aurora sincronizado')"><span class="icon text-[14px]">sync</span> Sincronizar</button>
+          </div>
+
+          <div class="card flex flex-col gap-3 conn-item" data-type="banco">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0"><div class="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center shrink-0"><span class="icon text-[18px]">storage</span></div><div class="min-w-0"><h3 class="text-sm font-semibold truncate">E-commerce Legacy</h3><p class="text-[11px] font-mono text-faint truncate">db-replica.internal.lan</p></div></div>
+              <label class="switch bg-success shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="toggleConn(this,'E-commerce Legacy')"><span class="absolute h-4 w-4 bg-white rounded-full transition-transform translate-x-4"></span></label>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-3 flex flex-col gap-1.5 text-xs">
+              <div class="flex justify-between"><span class="text-muted">Registros</span><span class="font-mono">1.2M</span></div>
+              <div class="flex justify-between"><span class="text-muted">Delta</span><span class="font-mono text-success">98.4%</span></div>
+              <div class="flex justify-between"><span class="text-muted">Extração</span><span class="font-mono">Batch 15m</span></div>
+            </div>
+            <button class="btn-secondary !h-8 text-xs w-full" onclick="mockAction(this,'MySQL sincronizado')"><span class="icon text-[14px]">sync</span> Sincronizar</button>
+          </div>
+
+          <div class="card flex flex-col gap-3 conn-item" data-type="banco">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0"><div class="w-9 h-9 rounded-lg bg-success-soft text-success flex items-center justify-center shrink-0"><span class="icon text-[18px]">table_chart</span></div><div class="min-w-0"><h3 class="text-sm font-semibold truncate">Orçamento 2025</h3><p class="text-[11px] font-mono text-faint truncate">drive.google.com/fin</p></div></div>
+              <label class="switch bg-success shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="toggleConn(this,'Orçamento 2025')"><span class="absolute h-4 w-4 bg-white rounded-full transition-transform translate-x-4"></span></label>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-3 flex flex-col gap-1.5 text-xs">
+              <div class="flex justify-between"><span class="text-muted">Abas</span><span class="font-mono">4</span></div>
+              <div class="flex justify-between"><span class="text-muted">Auth</span><span class="font-mono text-success">OAuth2 OK</span></div>
+              <div class="flex justify-between"><span class="text-muted">Sincronia</span><span class="font-mono">Polling 1h</span></div>
+            </div>
+            <button class="btn-secondary !h-8 text-xs w-full" onclick="mockAction(this,'Sheets sincronizado')"><span class="icon text-[14px]">sync</span> Sincronizar</button>
+          </div>
+
+          <div class="card flex flex-col gap-3 conn-item" data-type="webhook">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0"><div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0"><span class="icon text-[18px]">webhook</span></div><div class="min-w-0"><h3 class="text-sm font-semibold truncate">Stripe &amp; Hubspot Events</h3><p class="text-[11px] font-mono text-faint truncate">api.orbit.io/hooks</p></div></div>
+              <label class="switch bg-success shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="toggleConn(this,'Stripe & Hubspot Events')"><span class="absolute h-4 w-4 bg-white rounded-full transition-transform translate-x-4"></span></label>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-3 flex flex-col gap-1.5 text-xs">
+              <div class="flex justify-between"><span class="text-muted">Endpoints</span><span class="font-mono">2 ativos</span></div>
+              <div class="flex justify-between"><span class="text-muted">Fila</span><span class="font-mono">0 msgs</span></div>
+              <div class="flex justify-between"><span class="text-muted">Assinatura</span><span class="font-mono text-success">SHA256</span></div>
+            </div>
+            <button class="btn-secondary !h-8 text-xs w-full" onclick="mockAction(this,'Mock disparado com sucesso')"><span class="icon text-[14px]">play_arrow</span> Testar mock</button>
+          </div>
+
+          <div class="card flex flex-col gap-3 conn-item" data-type="api">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0"><div class="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center shrink-0"><span class="icon text-[18px]">api</span></div><div class="min-w-0"><h3 class="text-sm font-semibold truncate">Custom ERP Gateway</h3><p class="text-[11px] font-mono text-faint truncate">erp.corp/rest/v3</p></div></div>
+              <label class="switch bg-success shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="toggleConn(this,'Custom ERP Gateway')"><span class="absolute h-4 w-4 bg-white rounded-full transition-transform translate-x-4"></span></label>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-3 flex flex-col gap-1.5 text-xs">
+              <div class="flex justify-between"><span class="text-muted">Rate limit</span><span class="font-mono">1k req/min</span></div>
+              <div class="flex justify-between"><span class="text-muted">Worker</span><span class="font-mono text-success">Pronto</span></div>
+              <div class="flex justify-between"><span class="text-muted">Paginação</span><span class="font-mono">500/req</span></div>
+            </div>
+            <button class="btn-secondary !h-8 text-xs w-full" onclick="mockAction(this,'ERP sincronizado')"><span class="icon text-[14px]">sync</span> Sincronizar</button>
+          </div>
+
+          <div class="card flex flex-col gap-3 conn-item" data-type="api">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0"><div class="w-9 h-9 rounded-lg bg-primary-soft text-primary flex items-center justify-center shrink-0"><span class="icon text-[18px]">campaign</span></div><div class="min-w-0"><h3 class="text-sm font-semibold truncate">Meta Ads Insights API</h3><p class="text-[11px] font-mono text-faint truncate">graph.facebook.com/v19</p></div></div>
+              <label class="switch bg-success shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="toggleConn(this,'Meta Ads Insights API')"><span class="absolute h-4 w-4 bg-white rounded-full transition-transform translate-x-4"></span></label>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-3 flex flex-col gap-1.5 text-xs">
+              <div class="flex justify-between"><span class="text-muted">Campanhas</span><span class="font-mono">34 ativas</span></div>
+              <div class="flex justify-between"><span class="text-muted">Token</span><span class="font-mono text-success">válido (58d)</span></div>
+              <div class="flex justify-between"><span class="text-muted">Última exec.</span><span class="font-mono">hoje 06:00</span></div>
+            </div>
+            <button class="btn-secondary !h-8 text-xs w-full" onclick="mockAction(this,'Token renovado')"><span class="icon text-[14px]">refresh</span> Renovar token</button>
+          </div>
+
+          <div class="card flex flex-col gap-3 conn-item" data-type="banco">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0"><div class="w-9 h-9 rounded-lg bg-warning-soft text-warning flex items-center justify-center shrink-0"><span class="icon text-[18px]">dns</span></div><div class="min-w-0"><h3 class="text-sm font-semibold truncate">Base Legada ERP</h3><p class="text-[11px] font-mono text-faint truncate">MySQL 5.7 · VPN</p></div></div>
+              <label class="switch bg-warning shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="toggleConn(this,'Base Legada ERP')"><span class="absolute h-4 w-4 bg-white rounded-full transition-transform translate-x-4"></span></label>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-3 flex flex-col gap-1.5 text-xs">
+              <div class="flex justify-between"><span class="text-muted">Latência</span><span class="font-mono text-warning">380ms alerta</span></div>
+              <div class="flex justify-between"><span class="text-muted">Último lote</span><span class="font-mono">há 12 min</span></div>
+              <div class="flex justify-between"><span class="text-muted">Registros</span><span class="font-mono">892.110</span></div>
+            </div>
+            <button class="btn-secondary !h-8 text-xs w-full" onclick="mockAction(this,'Diagnóstico iniciado')"><span class="icon text-[14px]">troubleshoot</span> Diagnosticar</button>
+          </div>
+
+          <div class="card flex flex-col gap-3 conn-item" data-type="webhook">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0"><div class="w-9 h-9 rounded-lg bg-success-soft text-success flex items-center justify-center shrink-0"><span class="icon text-[18px]">bolt</span></div><div class="min-w-0"><h3 class="text-sm font-semibold truncate">n8n Workflow Relay</h3><p class="text-[11px] font-mono text-faint truncate">hooks.orbit.io/n8n</p></div></div>
+              <label class="switch bg-success shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="toggleConn(this,'n8n Workflow Relay')"><span class="absolute h-4 w-4 bg-white rounded-full transition-transform translate-x-4"></span></label>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-3 flex flex-col gap-1.5 text-xs">
+              <div class="flex justify-between"><span class="text-muted">Execuções/dia</span><span class="font-mono">1.240</span></div>
+              <div class="flex justify-between"><span class="text-muted">Falhas</span><span class="font-mono text-success">0</span></div>
+              <div class="flex justify-between"><span class="text-muted">Fila</span><span class="font-mono">0 msgs</span></div>
+            </div>
+            <button class="btn-secondary !h-8 text-xs w-full" onclick="mockAction(this,'Mock disparado com sucesso')"><span class="icon text-[14px]">play_arrow</span> Testar mock</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Logs -->
+      <div data-tabpanel="logs" class="flex flex-col gap-4">
+        <div class="card flex flex-col gap-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div><h2 class="text-sm font-semibold">Logs de Sincronização</h2><p class="text-xs text-muted">Fluxo contínuo de eventos e validações de schema.</p></div>
+            <div class="flex items-center gap-2">
+              <span class="badge bg-success-soft text-success"><span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>SSE Live Feed</span>
+              <button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'CSV exportado com 284.912 eventos',{loadingText:'Gerando...'})"><span class="icon text-[16px]">download</span> Exportar CSV</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto -mx-5">
+            <table class="w-full text-left text-sm min-w-[680px]" id="tbl-logs">
+              <thead><tr class="text-[11px] uppercase text-faint font-semibold border-b border-line">
+                <th data-sort class="py-2 px-5" onclick="sortTableBy(this)">Timestamp</th><th class="py-2 px-5">Conector / Tabela</th><th class="py-2 px-5">Evento</th><th data-sort class="py-2 px-5 text-right" onclick="sortTableBy(this)">Registros</th><th data-sort class="py-2 px-5 text-right" onclick="sortTableBy(this)">Latência</th><th class="py-2 px-5">Status</th>
+              </tr></thead>
+              <tbody class="divide-y divide-line font-mono text-xs">
+                <tr><td class="py-3 px-5 text-muted" data-sort="20250601143219">14:32:19</td><td class="py-3 px-5 font-sans font-medium text-ink">Aurora / orders</td><td class="py-3 px-5">CDC_INSERT</td><td class="py-3 px-5 text-right" data-sort="1420">1.420</td><td class="py-3 px-5 text-right text-success" data-sort="32">32ms</td><td class="py-3 px-5"><span class="badge bg-success-soft text-success font-sans">Concluído</span></td></tr>
+                <tr><td class="py-3 px-5 text-muted" data-sort="20250601143158">14:31:58</td><td class="py-3 px-5 font-sans font-medium text-ink">Stripe / charge.succeeded</td><td class="py-3 px-5">WEBHOOK</td><td class="py-3 px-5 text-right" data-sort="1">1</td><td class="py-3 px-5 text-right text-success" data-sort="18">18ms</td><td class="py-3 px-5"><span class="badge bg-success-soft text-success font-sans">Concluído</span></td></tr>
+                <tr><td class="py-3 px-5 text-muted" data-sort="20250601143000">14:30:00</td><td class="py-3 px-5 font-sans font-medium text-ink">MySQL / inventory</td><td class="py-3 px-5">BATCH_INC</td><td class="py-3 px-5 text-right" data-sort="45120">45.120</td><td class="py-3 px-5 text-right" data-sort="840">840ms</td><td class="py-3 px-5"><span class="badge bg-success-soft text-success font-sans">Concluído</span></td></tr>
+                <tr><td class="py-3 px-5 text-muted" data-sort="20250601142844">14:28:44</td><td class="py-3 px-5 font-sans font-medium text-ink">Sheets / Forecast_Q3</td><td class="py-3 px-5">SCHEMA_SYNC</td><td class="py-3 px-5 text-right" data-sort="324">324</td><td class="py-3 px-5 text-right" data-sort="210">210ms</td><td class="py-3 px-5"><span class="badge bg-success-soft text-success font-sans">Concluído</span></td></tr>
+                <tr><td class="py-3 px-5 text-muted" data-sort="20250601142612">14:26:12</td><td class="py-3 px-5 font-sans font-medium text-ink">ERP REST / invoices</td><td class="py-3 px-5">REST_POLL</td><td class="py-3 px-5 text-right" data-sort="500">500</td><td class="py-3 px-5 text-right text-success" data-sort="145">145ms</td><td class="py-3 px-5"><span class="badge bg-success-soft text-success font-sans">Concluído</span></td></tr>
+                <tr><td class="py-3 px-5 text-muted" data-sort="20250601142201">14:22:01</td><td class="py-3 px-5 font-sans font-medium text-ink">Legacy ERP / clientes</td><td class="py-3 px-5">BATCH_FULL</td><td class="py-3 px-5 text-right" data-sort="892110">892.110</td><td class="py-3 px-5 text-right text-warning" data-sort="4200">4.2s</td><td class="py-3 px-5"><span class="badge bg-warning-soft text-warning font-sans">Alerta</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flex items-center justify-between text-xs text-muted pt-2 border-t border-line">
+            <span>Últimos 6 de 284.912 eventos</span>
+            <div class="flex items-center gap-2"><button class="btn-secondary !h-8 text-xs" onclick="toast('Já é a primeira página','info')">Anterior</button><span class="font-mono">1 de 570</span><button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Página 2 carregada')">Próximo</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Schemas -->
+      <div data-tabpanel="schemas" class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="card flex flex-col gap-3">
+            <div class="flex items-center justify-between"><h3 class="text-sm font-semibold">Aurora → BigQuery DWH</h3><span class="badge bg-success-soft text-success">100% match</span></div>
+            <div class="w-full h-2 rounded-full bg-surface-2 overflow-hidden flex"><div class="bg-primary h-full" style="width:75%"></div><div class="bg-success h-full" style="width:25%"></div></div>
+            <div class="flex justify-between text-xs font-mono text-muted"><span>94 colunas mapeadas</span><span>0 conflitos</span></div>
+          </div>
+          <div class="card flex flex-col gap-3">
+            <h3 class="text-sm font-semibold">Checagens em execução</h3>
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-2"><div class="flex items-center gap-2 min-w-0"><span class="icon text-success text-[18px]">verified</span><span class="text-xs font-medium truncate">Tipagem JSONB vs RECORD</span></div><span class="badge bg-success-soft text-success shrink-0">OK</span></div>
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-2"><div class="flex items-center gap-2 min-w-0"><span class="icon text-success text-[18px]">verified</span><span class="text-xs font-medium truncate">Replicação de FKs e índices</span></div><span class="badge bg-success-soft text-success shrink-0">OK</span></div>
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-2"><div class="flex items-center gap-2 min-w-0"><span class="icon text-accent text-[18px]">notifications_active</span><span class="text-xs font-medium truncate">Detecção de drift de schema</span></div><span class="badge bg-accent-soft text-accent shrink-0">Ativo</span></div>
+          </div>
+        </div>
+        <div class="card flex flex-col gap-4">
+          <h3 class="text-sm font-semibold">Saúde de Infraestrutura por Serviço</h3>
+          <div class="overflow-x-auto -mx-5">
+            <table class="w-full text-left text-sm min-w-[680px]">
+              <thead><tr class="text-[11px] uppercase text-faint font-semibold border-b border-line"><th class="py-2 px-5">Serviço</th><th class="py-2 px-5 text-right">Uptime</th><th class="py-2 px-5 text-right">p95</th><th class="py-2 px-5 text-right">Erros/min</th></tr></thead>
+              <tbody class="divide-y divide-line font-mono text-xs">
+                <tr><td class="py-3 px-5 font-sans font-medium">ingestion-worker</td><td class="py-3 px-5 text-right text-success">99.97%</td><td class="py-3 px-5 text-right">118ms</td><td class="py-3 px-5 text-right">0.04</td></tr>
+                <tr><td class="py-3 px-5 font-sans font-medium">schema-diff-engine</td><td class="py-3 px-5 text-right text-success">99.99%</td><td class="py-3 px-5 text-right">44ms</td><td class="py-3 px-5 text-right">0.00</td></tr>
+                <tr><td class="py-3 px-5 font-sans font-medium">webhook-relay</td><td class="py-3 px-5 text-right text-success">99.95%</td><td class="py-3 px-5 text-right">54ms</td><td class="py-3 px-5 text-right">0.02</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn-primary" onclick="mockAction(this,'Mapeador de schema aberto')"><span class="icon text-[16px]">account_tree</span> Mapeador de Schema</button>
+          <button class="btn-secondary" onclick="mockAction(this,'Configurações de throttling salvas')">Ajustes</button>
+        </div>
+      </div>
+
+      <!-- TAB: Catálogo -->
+      <div data-tabpanel="catalogo" class="flex flex-col gap-4">
+        <p class="text-xs text-muted">Conectores homologados prontos para ativação em um clique no seu ecossistema Acme Corp.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="card flex flex-col gap-3 items-start">
+            <div class="w-10 h-10 rounded-lg bg-primary-soft text-primary flex items-center justify-center"><span class="icon text-[20px]">contact_page</span></div>
+            <div><h3 class="text-sm font-semibold">HubSpot CRM</h3><p class="text-xs text-muted mt-1">Sincronize contatos, negócios e pipelines em tempo real.</p></div>
+            <button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'HubSpot conectado com sucesso')">Conectar</button>
+          </div>
+          <div class="card flex flex-col gap-3 items-start">
+            <div class="w-10 h-10 rounded-lg bg-success-soft text-success flex items-center justify-center"><span class="icon text-[20px]">folder_open</span></div>
+            <div><h3 class="text-sm font-semibold">Google Drive Org</h3><p class="text-xs text-muted mt-1">Ingestão automática de CSVs, PDFs e relatórios de pastas.</p></div>
+            <button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Google Drive conectado com sucesso')">Conectar</button>
+          </div>
+          <div class="card flex flex-col gap-3 items-start">
+            <div class="w-10 h-10 rounded-lg bg-warning-soft text-warning flex items-center justify-center"><span class="icon text-[20px]">shopping_bag</span></div>
+            <div><h3 class="text-sm font-semibold">Shopify Store</h3><p class="text-xs text-muted mt-1">Mapeamento direto de SKUs, checkout e carrinhos abandonados.</p></div>
+            <button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Shopify conectado com sucesso')">Conectar</button>
+          </div>
+          <div class="card flex flex-col gap-3 items-start">
+            <div class="w-10 h-10 rounded-lg bg-accent-soft text-accent flex items-center justify-center"><span class="icon text-[20px]">query_stats</span></div>
+            <div><h3 class="text-sm font-semibold">Google Analytics 4</h3><p class="text-xs text-muted mt-1">Fluxo de atribuição web, sessões e funis multi-touch.</p></div>
+            <button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'GA4 conectado com sucesso')">Conectar</button>
+          </div>
+          <div class="card flex flex-col gap-3 items-start">
+            <div class="w-10 h-10 rounded-lg bg-primary-soft text-primary flex items-center justify-center"><span class="icon text-[20px]">bolt</span></div>
+            <div><h3 class="text-sm font-semibold">n8n Workflow</h3><p class="text-xs text-muted mt-1">Dispare orquestrações bidirecionais via node customizado.</p></div>
+            <button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'n8n conectado com sucesso')">Conectar</button>
+          </div>
+          <div class="card flex flex-col gap-3 items-start">
+            <div class="w-10 h-10 rounded-lg bg-success-soft text-success flex items-center justify-center"><span class="icon text-[20px]">analytics</span></div>
+            <div><h3 class="text-sm font-semibold">Snowflake DWH</h3><p class="text-xs text-muted mt-1 flex items-center gap-1">98% de afinidade com suas fontes atuais <span class="badge bg-accent-soft text-accent">IA</span></p></div>
+            <button class="btn-primary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Snowflake conectado com sucesso')">Conectar recomendado</button>
+          </div>
+          <div class="card flex flex-col gap-3 items-start">
+            <div class="w-10 h-10 rounded-lg bg-accent-soft text-accent flex items-center justify-center"><span class="icon text-[20px]">alt_route</span></div>
+            <div><h3 class="text-sm font-semibold">Kafka Stream Bus</h3><p class="text-xs text-muted mt-1">Streaming de eventos de alta vazão entre serviços.</p></div>
+            <button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Kafka conectado com sucesso')">Conectar</button>
+          </div>
+          <div class="card flex flex-col gap-3 items-start">
+            <div class="w-10 h-10 rounded-lg bg-warning-soft text-warning flex items-center justify-center"><span class="icon text-[20px]">dns</span></div>
+            <div><h3 class="text-sm font-semibold">Redis Cache Layer</h3><p class="text-xs text-muted mt-1">Camada de cache para reduzir latência de consultas.</p></div>
+            <button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Redis conectado com sucesso')">Conectar</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Modal: Conectar fonte -->
+<div id="modal-conectar" class="hidden fixed inset-0 z-[250] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink/40" onclick="closeModal('modal-conectar')"></div>
+  <div class="relative bg-card rounded-xl shadow-xl w-full max-w-md p-5 flex flex-col gap-4">
+    <div class="flex items-center justify-between"><h3 class="text-sm font-semibold">Conectar nova fonte</h3><button class="w-8 h-8 rounded-lg hover:bg-surface-2 flex items-center justify-center" onclick="closeModal('modal-conectar')"><span class="icon text-[18px]">close</span></button></div>
+    <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">Tipo de fonte</span>
+      <select class="h-9 px-3 bg-surface-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"><option>PostgreSQL</option><option>MySQL</option><option>Google Sheets</option><option>Webhook</option><option>REST API</option></select>
+    </label>
+    <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">Nome da conexão</span><input type="text" placeholder="Ex: Banco de Produção" class="h-9 px-3 bg-surface-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+    <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">String de conexão / URL</span><input type="text" placeholder="postgres://..." class="h-9 px-3 bg-surface-2 rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+    <div class="flex items-center gap-2 justify-end pt-2 border-t border-line">
+      <button class="btn-secondary" onclick="closeModal('modal-conectar')">Cancelar</button>
+      <button class="btn-primary" onclick="mockAction(this,'Fonte conectada com sucesso',{loadingText:'Testando conexão...',delay:1200,after:function(){closeModal('modal-conectar')}})">Testar &amp; Conectar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-root" class="fixed bottom-5 right-5 z-[300] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<script>
+  window.addEventListener('load', function () { setTimeout(function () { var el = document.getElementById('skel-overlay'); if (!el) return; el.style.opacity = '0'; setTimeout(function () { el.remove(); }, 350); }, 550); });
+
+  function toast(message, type) {
+    type = type || 'success';
+    var root = document.getElementById('toast-root');
+    var el = document.createElement('div');
+    var colors = { success: 'bg-success text-white', error: 'bg-danger text-white', info: 'bg-primary text-white' };
+    var icons = { success: 'check_circle', error: 'error', info: 'info' };
+    el.className = 'pointer-events-auto px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium flex items-center gap-2 ' + (colors[type] || colors.success);
+    el.style.cssText = 'opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;';
+    el.innerHTML = '<span class="icon text-[16px]">' + (icons[type] || icons.success) + '</span><span>' + message + '</span>';
+    root.appendChild(el);
+    requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+    setTimeout(function () { el.style.opacity = '0'; el.style.transform = 'translateY(6px)'; setTimeout(function () { el.remove(); }, 300); }, 3000);
+  }
+  function mockAction(btn, message, opts) {
+    opts = opts || {};
+    if (btn.dataset.loading === '1') return;
+    btn.dataset.loading = '1'; var original = btn.innerHTML; btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>' + (opts.loadingText ? '<span>' + opts.loadingText + '</span>' : '<span>Processando...</span>');
+    setTimeout(function () { btn.innerHTML = original; btn.disabled = false; btn.dataset.loading = '0'; if (message) toast(message, opts.type); if (opts.after) opts.after(); }, opts.delay || 900);
+  }
+  function setTab(name) {
+    document.querySelectorAll('[data-tabpanel]').forEach(function (el) { el.classList.toggle('is-active', el.dataset.tabpanel === name); });
+    document.querySelectorAll('[data-tab]').forEach(function (btn) { var active = btn.dataset.tab === name; btn.classList.toggle('tab-active', active); btn.classList.toggle('tab-inactive', !active); });
+  }
+  function sortTableBy(th) {
+    var table = th.closest('table'); var tbody = table.tBodies[0]; var idx = th.cellIndex; var asc = th.dataset.dir !== 'asc';
+    Array.from(table.tHead.rows[0].cells).forEach(function (c) { c.dataset.dir = ''; var i = c.querySelector('.sort-ind'); if (i) i.remove(); });
+    th.dataset.dir = asc ? 'asc' : 'desc';
+    var rows = Array.from(tbody.rows);
+    rows.sort(function (a, b) {
+      var ac = a.cells[idx], bc = b.cells[idx];
+      var av = ac.dataset.sort !== undefined ? ac.dataset.sort : ac.textContent.trim();
+      var bv = bc.dataset.sort !== undefined ? bc.dataset.sort : bc.textContent.trim();
+      var an = parseFloat(av), bn = parseFloat(bv);
+      var cmp = (!isNaN(an) && !isNaN(bn)) ? an - bn : av.localeCompare(bv);
+      return asc ? cmp : -cmp;
+    });
+    rows.forEach(function (r) { tbody.appendChild(r); });
+    var ind = document.createElement('span'); ind.className = 'sort-ind text-[10px] ml-1'; ind.textContent = asc ? '▲' : '▼'; th.appendChild(ind);
+  }
+  function filterConnectors(type) {
+    document.querySelectorAll('#conn-filters [data-filter]').forEach(function (b) { var active = b.dataset.filter === type; b.classList.toggle('tab-active', active); b.classList.toggle('tab-inactive', !active); });
+    document.querySelectorAll('.conn-item').forEach(function (c) { c.style.display = (type === 'todos' || c.dataset.type === type) ? '' : 'none'; });
+  }
+  function filterConnByName(input) {
+    var q = input.value.toLowerCase();
+    document.querySelectorAll('.conn-item').forEach(function (c) { c.style.display = c.textContent.toLowerCase().indexOf(q) !== -1 ? '' : 'none'; });
+  }
+  function toggleConn(input, name) {
+    var label = input.closest('label');
+    label.classList.toggle('bg-success', input.checked); label.classList.toggle('bg-line', !input.checked);
+    toast(name + (input.checked ? ' ativado' : ' pausado'), input.checked ? 'success' : 'info');
+  }
+  function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+</script>
+
+</body>
+</html>

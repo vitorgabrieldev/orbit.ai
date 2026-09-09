@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orbit — Equipe</title>
+<link rel="icon" type="image/png" href="../../marca/logo-whale.png"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400..500,0..1,0" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script id="tailwind-config">
+  tailwind.config = { theme: { extend: {
+    colors: { ink:"#0b1120", muted:"#5b6178", faint:"#94a0c0", line:"#e4e7f6", surface:"#f7f8fd", "surface-2":"#eef0fa", card:"#ffffff",
+      primary:"#1f0faf", "primary-dark":"#170b86", "primary-soft":"#ecebfd", accent:"#7c3aed", "accent-soft":"#f2ebfe",
+      success:"#059669", "success-soft":"#e7f8f1", warning:"#d97706", "warning-soft":"#fef3e0", danger:"#dc2626", "danger-soft":"#fdeaea" },
+    fontFamily: { sans:["Sora","sans-serif"], mono:["JetBrains Mono","monospace"] } } } };
+</script>
+<style>
+  * { font-family: 'Sora', sans-serif; }
+  code, .font-mono { font-family: 'JetBrains Mono', monospace; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #d7dcf0; border-radius: 4px; }
+  [data-tabpanel] { display: none !important; } [data-tabpanel].is-active { display: flex !important; }
+  button, .navlink, a[href], [role="button"], select, summary, .tab-btn { cursor: pointer; }
+  input[type="checkbox"] { cursor: pointer; }
+  th[data-sort] { cursor: pointer; user-select: none; }
+  @keyframes skel-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .skel { background: linear-gradient(90deg,#eef0fa,#e2e6f8,#eef0fa); background-size: 200% 100%; animation: skel-shimmer 1.4s ease-in-out infinite; }
+  #skel-overlay { transition: opacity .35s ease; }
+</style>
+<style type="text/tailwindcss">
+  @layer components {
+    .card { @apply bg-card border border-line rounded-xl p-5; }
+    .eyebrow { @apply text-[11px] font-semibold uppercase tracking-wider text-faint; }
+    .btn { @apply inline-flex items-center justify-center gap-2 text-sm font-medium rounded-lg px-3.5 h-9 transition-colors whitespace-nowrap select-none disabled:opacity-60; }
+    .btn-primary { @apply btn bg-primary text-white hover:bg-primary-dark shadow-sm; }
+    .btn-secondary { @apply btn bg-white border border-line text-ink hover:bg-surface-2; }
+    .badge { @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap; }
+    .tab-btn { @apply px-3.5 h-9 inline-flex items-center text-sm font-medium rounded-lg transition-colors whitespace-nowrap; }
+    .tab-active { @apply bg-primary text-white shadow-sm; } .tab-inactive { @apply text-muted hover:text-ink hover:bg-surface-2; }
+    .navlink { @apply flex items-center gap-3 px-3 h-10 rounded-lg text-sm font-medium transition-colors; }
+    .navlink-active { @apply bg-primary text-white shadow-sm; } .navlink-inactive { @apply text-muted hover:bg-surface-2 hover:text-ink; }
+    .icon { font-family: 'Material Symbols Outlined'; font-size: 20px; line-height: 1; }
+    .spinner { @apply inline-block w-4 h-4 border-2 border-current/25 border-t-current rounded-full animate-spin align-[-3px]; }
+    .navgroup { @apply px-3 pt-4 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-faint; }
+  }
+</style>
+</head>
+<body class="bg-surface text-ink text-sm antialiased">
+
+<div id="skel-overlay" class="fixed inset-0 z-[200] bg-surface flex" aria-hidden="true">
+  <div class="w-60 shrink-0 border-r border-line p-4 flex flex-col gap-2.5"><div class="skel h-8 w-24 rounded-lg mb-4"></div><div class="skel h-9 rounded-lg"></div></div>
+  <div class="flex-1 p-6 flex flex-col gap-4"><div class="skel h-9 w-64 rounded-lg"></div><div class="skel h-72 rounded-xl"></div></div>
+</div>
+
+<div class="flex min-h-screen">
+  <aside class="w-60 shrink-0 fixed top-0 bottom-0 left-0 bg-card border-r border-line flex flex-col z-40">
+    <a href="../../index.html" class="h-16 px-5 flex items-center gap-2.5 border-b border-line shrink-0 no-underline">
+      <img src="../../marca/logo-whale.png" alt="Orbit" class="h-8 w-auto"/><span class="text-base font-bold tracking-tight text-ink">Orbit</span>
+    </a>
+    <nav class="flex flex-col gap-1 px-3 flex-1 overflow-y-auto pb-3">
+      <div class="navgroup">Principal</div>
+      <a class="navlink navlink-inactive" href="../dashboard/dashboard.html"><span class="icon">space_dashboard</span> Dashboard</a>
+      <a class="navlink navlink-inactive" href="../integracoes/integracoes.html"><span class="icon">hub</span> Integrações <span class="ml-auto text-[11px] font-mono text-faint">5</span></a>
+      <a class="navlink navlink-inactive" href="../documentos/documentos.html"><span class="icon">description</span> Documentos</a>
+      <a class="navlink navlink-inactive" href="../construtor/construtor.html"><span class="icon">dashboard_customize</span> Construtor</a>
+      <a class="navlink navlink-inactive" href="../automacoes/automacoes.html"><span class="icon">account_tree</span> Automações</a>
+      <a class="navlink navlink-inactive" href="../orbit-ai/orbit-ai.html"><span class="icon">auto_awesome</span> Orbit AI</a>
+      <div class="navgroup">Workspace</div>
+      <a class="navlink navlink-active" href="equipe.html"><span class="icon">group</span> Equipe</a>
+      <a class="navlink navlink-inactive" href="../notificacoes/notificacoes.html"><span class="icon">notifications</span> Notificações <span class="ml-auto text-[11px] font-mono bg-danger text-white rounded-full px-1.5">3</span></a>
+      <a class="navlink navlink-inactive" href="../configuracoes/configuracoes.html"><span class="icon">settings</span> Configurações</a>
+    </nav>
+    <div class="p-3 border-t border-line">
+      <button class="w-full flex items-center gap-2.5 p-2.5 rounded-lg bg-surface-2 hover:bg-surface-2/70 transition-colors text-left" onclick="toast('Menu de conta em breve','info')">
+        <img alt="Mariana Silva" class="w-8 h-8 rounded-full object-cover shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7Qkz1Tv4EfpRyRShckeOEcIZfnuvs-A9PpC8fBVvdqp_9b5vHxNriuq1T0e1Qwkn0smbc05WQOqKKhZNKsVXWrT9neXi62dis42MDRAgQ2QLIWFLqY5D_sXAXclM6e2v4ol0EmoViSlkJ_dFXqe89kuu3Ze-dLVivwu4xzthInrgZoLo0ChWXOw_R_AKQ0-FLEQS-sI2AeYZatgEX27IPquNiuIpoqgnXLU-eSTFx2lm6gsGazaNO"/>
+        <div class="min-w-0 flex-1"><div class="text-xs font-semibold text-ink truncate">Mariana Silva</div><div class="text-[11px] text-faint truncate">Diretora de Operações</div></div>
+        <span class="icon text-[18px] text-faint">unfold_more</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="pl-60 flex-1 flex flex-col min-w-0">
+    <header class="h-16 border-b border-line bg-card/90 backdrop-blur sticky top-0 z-30 px-6 flex items-center gap-4">
+      <div class="relative flex-1 max-w-md">
+        <span class="icon absolute left-3 top-1/2 -translate-y-1/2 text-faint text-[18px]">search</span>
+        <input type="text" placeholder="Buscar membros..." class="w-full h-9 pl-9 pr-3 bg-surface-2 rounded-lg text-sm placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-primary/30" oninput="filterTable(this,'#tbl-membros')"/>
+      </div>
+      <div class="ml-auto flex items-center gap-3">
+        <button class="relative w-9 h-9 rounded-lg hover:bg-surface-2 text-muted flex items-center justify-center transition-colors" aria-label="Notificações" onclick="location.href='../notificacoes/notificacoes.html'">
+          <span class="icon text-[20px]">notifications</span><span class="absolute top-2 right-2 w-1.5 h-1.5 bg-danger rounded-full"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="p-6 flex flex-col gap-5 w-full">
+
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0"><h1 class="text-xl font-semibold tracking-tight truncate">Equipe</h1><span class="badge bg-success-soft text-success">8 membros</span></div>
+        <button class="btn-primary" type="button" onclick="openModal('modal-convite')"><span class="icon text-[16px]">person_add</span> Convidar membro</button>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Membros ativos</span><span class="text-xl font-semibold font-mono">7</span><span class="text-xs text-muted">1 convite pendente</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Papéis distintos</span><span class="text-xl font-semibold font-mono">4</span><span class="text-xs text-muted">Admin, Editor, Analista, Visualizador</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Seats do plano</span><span class="text-xl font-semibold font-mono">8/15</span><span class="text-xs text-muted">Plano Enterprise</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Ações auditadas (30d)</span><span class="text-xl font-semibold font-mono">1.204</span><span class="text-xs text-muted">100% rastreadas</span></div>
+      </div>
+
+      <div class="flex items-center gap-1 bg-surface-2 p-1 rounded-lg w-fit overflow-x-auto">
+        <button class="tab-btn tab-active" data-tab="membros" onclick="setTab('membros')">Membros</button>
+        <button class="tab-btn tab-inactive" data-tab="rbac" onclick="setTab('rbac')">Papéis &amp; Permissões</button>
+        <button class="tab-btn tab-inactive" data-tab="auditoria" onclick="setTab('auditoria')">Log de Auditoria</button>
+      </div>
+
+      <!-- TAB: Membros -->
+      <div data-tabpanel="membros" class="is-active flex flex-col gap-4">
+        <div class="card !p-0 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm min-w-[760px]" id="tbl-membros">
+              <thead><tr class="text-[11px] uppercase text-faint font-semibold border-b border-line">
+                <th data-sort class="py-3 px-5" onclick="sortTableBy(this)">Nome</th><th class="py-3 px-5">Papel</th><th class="py-3 px-5">Status</th><th data-sort class="py-3 px-5" onclick="sortTableBy(this)">Último acesso</th><th class="py-3 px-5 text-center">Ações</th>
+              </tr></thead>
+              <tbody class="divide-y divide-line">
+                <tr><td class="py-3 px-5"><div class="flex items-center gap-2.5"><img class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7Qkz1Tv4EfpRyRShckeOEcIZfnuvs-A9PpC8fBVvdqp_9b5vHxNriuq1T0e1Qwkn0smbc05WQOqKKhZNKsVXWrT9neXi62dis42MDRAgQ2QLIWFLqY5D_sXAXclM6e2v4ol0EmoViSlkJ_dFXqe89kuu3Ze-dLVivwu4xzthInrgZoLo0ChWXOw_R_AKQ0-FLEQS-sI2AeYZatgEX27IPquNiuIpoqgnXLU-eSTFx2lm6gsGazaNO"/><div><div class="font-medium">Mariana Siqueira</div><div class="text-xs text-faint font-mono">mariana@acme.com</div></div></div></td>
+                  <td class="py-3 px-5"><select class="h-8 px-2 bg-surface-2 rounded-md text-xs" onchange="toast('Papel atualizado para '+this.value,'success')"><option>Admin</option><option>Editor</option><option>Analista</option><option>Visualizador</option></select></td>
+                  <td class="py-3 px-5"><span class="badge bg-success-soft text-success">Ativo</span></td><td class="py-3 px-5 text-xs font-mono text-muted" data-sort="1">há 2 min</td>
+                  <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-danger hover:underline" onclick="removeMember(this,'Mariana Siqueira')">Remover</button></td></tr>
+                <tr><td class="py-3 px-5"><div class="flex items-center gap-2.5"><img class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1XnDDSQQKzSqBQ09jmBObLSouOpyxU4qhUifZdx428BUvIaDP_YafgDp0CdOULMx39Vy3IZZDBSDkJAgZYlGcyGWJiOuYPRCLgEpqqsNDph3VyAvIBMGKwjIoA15E-nhsuSxApDTmnqHSp8u8mvsaG_2ZoRibJYG_VDCh3ErcyhhnJdBdO1vAkZ6nF4ftSGgVTZgxyova9CHNpCh1LAtvSIpv32744OBHJ6BNSZcrnrQM4yDvbKQDmdxlc"/><div><div class="font-medium">Dev Ops Lead</div><div class="text-xs text-faint font-mono">admin@orbit.io</div></div></div></td>
+                  <td class="py-3 px-5"><select class="h-8 px-2 bg-surface-2 rounded-md text-xs" onchange="toast('Papel atualizado para '+this.value,'success')"><option>Admin</option><option selected>Editor</option><option>Analista</option><option>Visualizador</option></select></td>
+                  <td class="py-3 px-5"><span class="badge bg-success-soft text-success">Ativo</span></td><td class="py-3 px-5 text-xs font-mono text-muted" data-sort="30">há 30 min</td>
+                  <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-danger hover:underline" onclick="removeMember(this,'Dev Ops Lead')">Remover</button></td></tr>
+                <tr><td class="py-3 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-accent-soft text-accent flex items-center justify-center text-xs font-bold">RB</div><div><div class="font-medium">Renata Brandão</div><div class="text-xs text-faint font-mono">renata@acme.com</div></div></div></td>
+                  <td class="py-3 px-5"><select class="h-8 px-2 bg-surface-2 rounded-md text-xs" onchange="toast('Papel atualizado para '+this.value,'success')"><option>Admin</option><option>Editor</option><option selected>Analista</option><option>Visualizador</option></select></td>
+                  <td class="py-3 px-5"><span class="badge bg-success-soft text-success">Ativo</span></td><td class="py-3 px-5 text-xs font-mono text-muted" data-sort="180">há 3h</td>
+                  <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-danger hover:underline" onclick="removeMember(this,'Renata Brandão')">Remover</button></td></tr>
+                <tr><td class="py-3 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-primary-soft text-primary flex items-center justify-center text-xs font-bold">CM</div><div><div class="font-medium">Carlos Mendes</div><div class="text-xs text-faint font-mono">carlos@acme.com</div></div></div></td>
+                  <td class="py-3 px-5"><select class="h-8 px-2 bg-surface-2 rounded-md text-xs" onchange="toast('Papel atualizado para '+this.value,'success')"><option>Admin</option><option>Editor</option><option selected>Analista</option><option>Visualizador</option></select></td>
+                  <td class="py-3 px-5"><span class="badge bg-success-soft text-success">Ativo</span></td><td class="py-3 px-5 text-xs font-mono text-muted" data-sort="1440">ontem</td>
+                  <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-danger hover:underline" onclick="removeMember(this,'Carlos Mendes')">Remover</button></td></tr>
+                <tr><td class="py-3 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-surface-2 text-muted flex items-center justify-center text-xs font-bold">JP</div><div><div class="font-medium">João Pereira</div><div class="text-xs text-faint font-mono">joao@acme.com</div></div></div></td>
+                  <td class="py-3 px-5"><select class="h-8 px-2 bg-surface-2 rounded-md text-xs" onchange="toast('Papel atualizado para '+this.value,'success')"><option>Admin</option><option>Editor</option><option>Analista</option><option selected>Visualizador</option></select></td>
+                  <td class="py-3 px-5"><span class="badge bg-warning-soft text-warning">Pendente</span></td><td class="py-3 px-5 text-xs font-mono text-muted" data-sort="999999">nunca</td>
+                  <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-primary hover:underline" onclick="mockAction(this,'Convite reenviado')">Reenviar convite</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: RBAC -->
+      <div data-tabpanel="rbac" class="flex flex-col gap-4">
+        <div class="card !p-0 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm min-w-[640px]">
+              <thead><tr class="text-[11px] uppercase text-faint font-semibold border-b border-line"><th class="py-3 px-5">Permissão</th><th class="py-3 px-5 text-center">Admin</th><th class="py-3 px-5 text-center">Editor</th><th class="py-3 px-5 text-center">Analista</th><th class="py-3 px-5 text-center">Visualizador</th></tr></thead>
+              <tbody class="divide-y divide-line">
+                <tr><td class="py-3 px-5 font-medium">Ver dashboards</td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td></tr>
+                <tr><td class="py-3 px-5 font-medium">Editar dashboards</td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td></tr>
+                <tr><td class="py-3 px-5 font-medium">Gerenciar integrações</td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td></tr>
+                <tr><td class="py-3 px-5 font-medium">Gerenciar equipe</td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td></tr>
+                <tr><td class="py-3 px-5 font-medium">Exportar dados</td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td></tr>
+                <tr><td class="py-3 px-5 font-medium">Configurações de marca</td><td class="py-3 px-5 text-center"><input type="checkbox" checked class="rounded text-primary"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td><td class="py-3 px-5 text-center"><input type="checkbox" disabled class="rounded"/></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <button class="btn-primary w-fit" onclick="mockAction(this,'Permissões salvas com sucesso')">Salvar alterações</button>
+      </div>
+
+      <!-- TAB: Auditoria -->
+      <div data-tabpanel="auditoria" class="flex flex-col gap-4">
+        <div class="card flex flex-col gap-4">
+          <div class="flex items-center justify-between flex-wrap gap-2"><h2 class="text-sm font-semibold">Log de Auditoria</h2><button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'CSV exportado')"><span class="icon text-[16px]">download</span> Exportar CSV</button></div>
+          <div class="overflow-x-auto -mx-5">
+            <table class="w-full text-left text-sm min-w-[720px]">
+              <thead><tr class="text-[11px] uppercase text-faint font-semibold border-b border-line"><th class="py-2 px-5">Timestamp</th><th class="py-2 px-5">Usuário</th><th class="py-2 px-5">Ação</th><th class="py-2 px-5">Recurso</th><th class="py-2 px-5">IP</th></tr></thead>
+              <tbody class="divide-y divide-line font-mono text-xs">
+                <tr><td class="py-3 px-5 text-muted">14:32:19</td><td class="py-3 px-5 font-sans font-medium">Mariana Siqueira</td><td class="py-3 px-5">dashboard.export</td><td class="py-3 px-5">Dashboard Operacional</td><td class="py-3 px-5">191.32.4.18</td></tr>
+                <tr><td class="py-3 px-5 text-muted">14:12:04</td><td class="py-3 px-5 font-sans font-medium">Dev Ops Lead</td><td class="py-3 px-5">integration.sync</td><td class="py-3 px-5">Produção AWS Aurora</td><td class="py-3 px-5">191.32.4.02</td></tr>
+                <tr><td class="py-3 px-5 text-muted">13:58:41</td><td class="py-3 px-5 font-sans font-medium">Renata Brandão</td><td class="py-3 px-5">document.view</td><td class="py-3 px-5">Relatório Q3</td><td class="py-3 px-5">177.10.9.201</td></tr>
+                <tr><td class="py-3 px-5 text-muted">13:40:12</td><td class="py-3 px-5 font-sans font-medium">Carlos Mendes</td><td class="py-3 px-5">automation.toggle</td><td class="py-3 px-5">Alertar risco de churn</td><td class="py-3 px-5">177.10.9.155</td></tr>
+                <tr><td class="py-3 px-5 text-muted">12:05:03</td><td class="py-3 px-5 font-sans font-medium">Mariana Siqueira</td><td class="py-3 px-5">team.role_change</td><td class="py-3 px-5">Carlos Mendes → Analista</td><td class="py-3 px-5">191.32.4.18</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div id="modal-convite" class="hidden fixed inset-0 z-[250] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-ink/40" onclick="closeModal('modal-convite')"></div>
+  <div class="relative bg-card rounded-xl shadow-xl w-full max-w-md p-5 flex flex-col gap-4">
+    <div class="flex items-center justify-between"><h3 class="text-sm font-semibold">Convidar membro</h3><button class="w-8 h-8 rounded-lg hover:bg-surface-2 flex items-center justify-center" onclick="closeModal('modal-convite')"><span class="icon text-[18px]">close</span></button></div>
+    <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">E-mail</span><input type="email" placeholder="nome@empresa.com" class="h-9 px-3 bg-surface-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"/></label>
+    <label class="flex flex-col gap-1.5"><span class="text-xs font-medium text-muted">Papel</span><select class="h-9 px-3 bg-surface-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"><option>Visualizador</option><option>Analista</option><option>Editor</option><option>Admin</option></select></label>
+    <div class="flex items-center gap-2 justify-end pt-2 border-t border-line">
+      <button class="btn-secondary" onclick="closeModal('modal-convite')">Cancelar</button>
+      <button class="btn-primary" onclick="mockAction(this,'Convite enviado com sucesso',{after:function(){closeModal('modal-convite')}})">Enviar convite</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-root" class="fixed bottom-5 right-5 z-[300] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<script>
+  window.addEventListener('load', function () { setTimeout(function () { var el = document.getElementById('skel-overlay'); if (!el) return; el.style.opacity = '0'; setTimeout(function () { el.remove(); }, 350); }, 550); });
+  function toast(message, type) {
+    type = type || 'success'; var root = document.getElementById('toast-root'); var el = document.createElement('div');
+    var colors = { success: 'bg-success text-white', error: 'bg-danger text-white', info: 'bg-primary text-white' };
+    var icons = { success: 'check_circle', error: 'error', info: 'info' };
+    el.className = 'pointer-events-auto px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium flex items-center gap-2 ' + (colors[type] || colors.success);
+    el.style.cssText = 'opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;';
+    el.innerHTML = '<span class="icon text-[16px]">' + (icons[type] || icons.success) + '</span><span>' + message + '</span>';
+    root.appendChild(el); requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+    setTimeout(function () { el.style.opacity = '0'; el.style.transform = 'translateY(6px)'; setTimeout(function () { el.remove(); }, 300); }, 3000);
+  }
+  function mockAction(btn, message, opts) {
+    opts = opts || {}; if (btn.dataset.loading === '1') return;
+    btn.dataset.loading = '1'; var original = btn.innerHTML; btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>' + (opts.loadingText ? '<span>' + opts.loadingText + '</span>' : '<span>Processando...</span>');
+    setTimeout(function () { btn.innerHTML = original; btn.disabled = false; btn.dataset.loading = '0'; if (message) toast(message, opts.type); if (opts.after) opts.after(); }, opts.delay || 900);
+  }
+  function setTab(name) {
+    document.querySelectorAll('[data-tabpanel]').forEach(function (el) { el.classList.toggle('is-active', el.dataset.tabpanel === name); });
+    document.querySelectorAll('[data-tab]').forEach(function (btn) { var active = btn.dataset.tab === name; btn.classList.toggle('tab-active', active); btn.classList.toggle('tab-inactive', !active); });
+  }
+  function sortTableBy(th) {
+    var table = th.closest('table'); var tbody = table.tBodies[0]; var idx = th.cellIndex; var asc = th.dataset.dir !== 'asc';
+    Array.from(table.tHead.rows[0].cells).forEach(function (c) { c.dataset.dir = ''; var i = c.querySelector('.sort-ind'); if (i) i.remove(); });
+    th.dataset.dir = asc ? 'asc' : 'desc';
+    var rows = Array.from(tbody.rows);
+    rows.sort(function (a, b) {
+      var ac = a.cells[idx], bc = b.cells[idx];
+      var av = ac.dataset.sort !== undefined ? ac.dataset.sort : ac.textContent.trim();
+      var bv = bc.dataset.sort !== undefined ? bc.dataset.sort : bc.textContent.trim();
+      var an = parseFloat(av), bn = parseFloat(bv);
+      var cmp = (!isNaN(an) && !isNaN(bn)) ? an - bn : av.localeCompare(bv);
+      return asc ? cmp : -cmp;
+    });
+    rows.forEach(function (r) { tbody.appendChild(r); });
+    var ind = document.createElement('span'); ind.className = 'sort-ind text-[10px] ml-1'; ind.textContent = asc ? '▲' : '▼'; th.appendChild(ind);
+  }
+  function filterTable(input, tableSel) {
+    var q = input.value.toLowerCase();
+    document.querySelectorAll(tableSel + ' tbody tr').forEach(function (row) { row.style.display = row.textContent.toLowerCase().indexOf(q) !== -1 ? '' : 'none'; });
+  }
+  function removeMember(btn, name) {
+    if (!confirm('Remover ' + name + ' da equipe?')) return;
+    btn.closest('tr').remove();
+    toast(name + ' removido da equipe', 'info');
+  }
+  function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+  function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+</script>
+
+</body>
+</html>

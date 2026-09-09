@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Background Gradient subtly enriching Nautic Cosmos and Midnight Blue -->
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#082052" stop-opacity="0.95"/>
+      <stop offset="60%" stop-color="#000107" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#000107" stop-opacity="1"/>
+    </radialGradient>
+
+    <!-- Linear Gradients for the dual orbit streams (Hub & Services) -->
+    <linearGradient id="orbitStream1" x1="120" y1="120" x2="392" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5B88B2"/>
+      <stop offset="50%" stop-color="#FBF9E4"/>
+      <stop offset="100%" stop-color="#5B88B2"/>
+    </linearGradient>
+
+    <linearGradient id="orbitStream2" x1="392" y1="120" x2="120" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5B88B2"/>
+      <stop offset="45%" stop-color="#082052"/>
+      <stop offset="80%" stop-color="#5B88B2"/>
+      <stop offset="100%" stop-color="#FBF9E4"/>
+    </linearGradient>
+
+    <linearGradient id="coreGlow" x1="210" y1="210" x2="302" y2="302" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FBF9E4"/>
+      <stop offset="60%" stop-color="#5B88B2"/>
+      <stop offset="100%" stop-color="#082052"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="pearlGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Container Background (Nautic Cosmos) with 8px radius standard -->
+  <rect width="512" height="512" rx="8" fill="url(#bgGlow)"/>
+  <rect width="510" height="510" x="1" y="1" rx="7" stroke="#082052" stroke-width="1.5" fill="none"/>
+
+  <!-- Subtle dynamic orbital grid ring (representing data fabric / integration matrix) -->
+  <circle cx="256" cy="256" r="176" stroke="#082052" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.8"/>
+  <circle cx="256" cy="256" r="132" stroke="#5B88B2" stroke-width="1" stroke-dasharray="2 8" opacity="0.4"/>
+
+  <!-- Braço 1: Orbit Hub — Elipse Orbital de Dados e Integrações (Inclinada -35°) -->
+  <ellipse cx="256" cy="256" rx="168" ry="62" transform="rotate(-35 256 256)" 
+           stroke="url(#orbitStream1)" stroke-width="7" stroke-linecap="round" stroke-dasharray="720 70" opacity="0.95"/>
+
+  <!-- Braço 2: Orbit Services — Elipse Orbital de IA e Soluções Sob Demanda (Inclinada +35°) -->
+  <ellipse cx="256" cy="256" rx="168" ry="62" transform="rotate(35 256 256)" 
+           stroke="url(#orbitStream2)" stroke-width="7" stroke-linecap="round" stroke-dasharray="640 100" opacity="0.9"/>
+
+  <!-- Nó Conector 1 (Hub - Dados externos convergindo) -->
+  <g transform="translate(132, 168)">
+    <circle cx="0" cy="0" r="14" fill="#082052" stroke="#5B88B2" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="6" fill="#FBF9E4" filter="url(#pearlGlow)"/>
+  </g>
+
+  <!-- Nó Conector 2 (Services - Agente IA / Consultoria conectando) -->
+  <g transform="translate(380, 168)">
+    <circle cx="0" cy="0" r="14" fill="#082052" stroke="#5B88B2" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="6" fill="#5B88B2"/>
+    <circle cx="0" cy="0" r="3" fill="#FBF9E4"/>
+  </g>
+
+  <!-- Nó Conector 3 (Ponto periférico de sincronização e fluxo contínuo) -->
+  <g transform="translate(350, 320)">
+    <circle cx="0" cy="0" r="11" fill="#000107" stroke="#5B88B2" stroke-width="2"/>
+    <circle cx="0" cy="0" r="4.5" fill="#FBF9E4"/>
+  </g>
+
+  <!-- Nó Conector 4 (Ponto de entrada de microsserviços e APIs) -->
+  <g transform="translate(162, 320)">
+    <circle cx="0" cy="0" r="11" fill="#000107" stroke="#082052" stroke-width="2"/>
+    <circle cx="0" cy="0" r="4.5" fill="#5B88B2"/>
+  </g>
+
+  <!-- Halo de ressonância do Núcleo Central -->
+  <circle cx="256" cy="256" r="68" fill="#5B88B2" opacity="0.12" filter="url(#pearlGlow)"/>
+  <circle cx="256" cy="256" r="52" stroke="#5B88B2" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.75"/>
+
+  <!-- Núcleo Central da Holding (O Ponto de Convergência Unificado) -->
+  <circle cx="256" cy="256" r="38" fill="url(#coreGlow)" filter="url(#softGlow)"/>
+  
+  <!-- Núcleo Pearl Perfect Interior (Símbolo de clareza, verdade dos dados e inteligência pura) -->
+  <circle cx="256" cy="256" r="22" fill="#FBF9E4"/>
+
+  <!-- Micro-ícone central: Matriz de 4 quadrantes unificados em 1 único centro -->
+  <circle cx="256" cy="247" r="2.5" fill="#082052"/>
+  <circle cx="256" cy="265" r="2.5" fill="#082052"/>
+  <circle cx="247" cy="256" r="2.5" fill="#082052"/>
+  <circle cx="265" cy="256" r="2.5" fill="#082052"/>
+  <circle cx="256" cy="256" r="1.5" fill="#5B88B2"/>
+</svg>

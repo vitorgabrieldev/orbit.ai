@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orbit — Automações</title>
+<link rel="icon" type="image/png" href="../../marca/logo-whale.png"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400..500,0..1,0" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script id="tailwind-config">
+  tailwind.config = { theme: { extend: {
+    colors: { ink:"#0b1120", muted:"#5b6178", faint:"#94a0c0", line:"#e4e7f6", surface:"#f7f8fd", "surface-2":"#eef0fa", card:"#ffffff",
+      primary:"#1f0faf", "primary-dark":"#170b86", "primary-soft":"#ecebfd", accent:"#7c3aed", "accent-soft":"#f2ebfe",
+      success:"#059669", "success-soft":"#e7f8f1", warning:"#d97706", "warning-soft":"#fef3e0", danger:"#dc2626", "danger-soft":"#fdeaea" },
+    fontFamily: { sans:["Sora","sans-serif"], mono:["JetBrains Mono","monospace"] } } } };
+</script>
+<style>
+  * { font-family: 'Sora', sans-serif; }
+  code, .font-mono { font-family: 'JetBrains Mono', monospace; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #d7dcf0; border-radius: 4px; }
+  [data-tabpanel] { display: none !important; } [data-tabpanel].is-active { display: flex !important; }
+  button, .navlink, a[href], [role="button"], select, summary, .tab-btn { cursor: pointer; }
+  input[type="checkbox"], input[type="radio"] { cursor: pointer; }
+  th[data-sort] { cursor: pointer; user-select: none; }
+  .switch, .doc-card, .notif, .widget-item { cursor: pointer; }
+  @keyframes skel-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .skel { background: linear-gradient(90deg,#eef0fa,#e2e6f8,#eef0fa); background-size: 200% 100%; animation: skel-shimmer 1.4s ease-in-out infinite; }
+  #skel-overlay { transition: opacity .35s ease; }
+</style>
+<style type="text/tailwindcss">
+  @layer components {
+    .card { @apply bg-card border border-line rounded-xl p-5; }
+    .eyebrow { @apply text-[11px] font-semibold uppercase tracking-wider text-faint; }
+    .btn { @apply inline-flex items-center justify-center gap-2 text-sm font-medium rounded-lg px-3.5 h-9 transition-colors whitespace-nowrap select-none disabled:opacity-60; }
+    .btn-primary { @apply btn bg-primary text-white hover:bg-primary-dark shadow-sm; }
+    .btn-secondary { @apply btn bg-white border border-line text-ink hover:bg-surface-2; }
+    .badge { @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap; }
+    .tab-btn { @apply px-3.5 h-9 inline-flex items-center text-sm font-medium rounded-lg transition-colors whitespace-nowrap; }
+    .tab-active { @apply bg-primary text-white shadow-sm; } .tab-inactive { @apply text-muted hover:text-ink hover:bg-surface-2; }
+    .navlink { @apply flex items-center gap-3 px-3 h-10 rounded-lg text-sm font-medium transition-colors; }
+    .navlink-active { @apply bg-primary text-white shadow-sm; } .navlink-inactive { @apply text-muted hover:bg-surface-2 hover:text-ink; }
+    .icon { font-family: 'Material Symbols Outlined'; font-size: 20px; line-height: 1; }
+    .spinner { @apply inline-block w-4 h-4 border-2 border-current/25 border-t-current rounded-full animate-spin align-[-3px]; }
+    .navgroup { @apply px-3 pt-4 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-faint; }
+    .switch { @apply relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0; }
+  }
+</style>
+</head>
+<body class="bg-surface text-ink text-sm antialiased">
+
+<div id="skel-overlay" class="fixed inset-0 z-[200] bg-surface flex" aria-hidden="true">
+  <div class="w-60 shrink-0 border-r border-line p-4 flex flex-col gap-2.5"><div class="skel h-8 w-24 rounded-lg mb-4"></div><div class="skel h-9 rounded-lg"></div></div>
+  <div class="flex-1 p-6 flex flex-col gap-4"><div class="skel h-9 w-64 rounded-lg"></div><div class="skel h-40 rounded-xl"></div><div class="skel h-40 rounded-xl"></div></div>
+</div>
+
+<div class="flex min-h-screen">
+  <aside class="w-60 shrink-0 fixed top-0 bottom-0 left-0 bg-card border-r border-line flex flex-col z-40">
+    <a href="../../index.html" class="h-16 px-5 flex items-center gap-2.5 border-b border-line shrink-0 no-underline">
+      <img src="../../marca/logo-whale.png" alt="Orbit" class="h-8 w-auto"/><span class="text-base font-bold tracking-tight text-ink">Orbit</span>
+    </a>
+    <nav class="flex flex-col gap-1 px-3 flex-1 overflow-y-auto pb-3">
+      <div class="navgroup">Principal</div>
+      <a class="navlink navlink-inactive" href="../dashboard/dashboard.html"><span class="icon">space_dashboard</span> Dashboard</a>
+      <a class="navlink navlink-inactive" href="../integracoes/integracoes.html"><span class="icon">hub</span> Integrações <span class="ml-auto text-[11px] font-mono text-faint">5</span></a>
+      <a class="navlink navlink-inactive" href="../documentos/documentos.html"><span class="icon">description</span> Documentos</a>
+      <a class="navlink navlink-inactive" href="../construtor/construtor.html"><span class="icon">dashboard_customize</span> Construtor</a>
+      <a class="navlink navlink-active" href="automacoes.html"><span class="icon">account_tree</span> Automações</a>
+      <a class="navlink navlink-inactive" href="../orbit-ai/orbit-ai.html"><span class="icon">auto_awesome</span> Orbit AI</a>
+      <div class="navgroup">Workspace</div>
+      <a class="navlink navlink-inactive" href="../equipe/equipe.html"><span class="icon">group</span> Equipe</a>
+      <a class="navlink navlink-inactive" href="../notificacoes/notificacoes.html"><span class="icon">notifications</span> Notificações <span class="ml-auto text-[11px] font-mono bg-danger text-white rounded-full px-1.5">3</span></a>
+      <a class="navlink navlink-inactive" href="../configuracoes/configuracoes.html"><span class="icon">settings</span> Configurações</a>
+    </nav>
+    <div class="p-3 border-t border-line">
+      <button class="w-full flex items-center gap-2.5 p-2.5 rounded-lg bg-surface-2 hover:bg-surface-2/70 transition-colors text-left" onclick="toast('Menu de conta em breve','info')">
+        <img alt="Mariana Silva" class="w-8 h-8 rounded-full object-cover shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7Qkz1Tv4EfpRyRShckeOEcIZfnuvs-A9PpC8fBVvdqp_9b5vHxNriuq1T0e1Qwkn0smbc05WQOqKKhZNKsVXWrT9neXi62dis42MDRAgQ2QLIWFLqY5D_sXAXclM6e2v4ol0EmoViSlkJ_dFXqe89kuu3Ze-dLVivwu4xzthInrgZoLo0ChWXOw_R_AKQ0-FLEQS-sI2AeYZatgEX27IPquNiuIpoqgnXLU-eSTFx2lm6gsGazaNO"/>
+        <div class="min-w-0 flex-1"><div class="text-xs font-semibold text-ink truncate">Mariana Silva</div><div class="text-[11px] text-faint truncate">Diretora de Operações</div></div>
+        <span class="icon text-[18px] text-faint">unfold_more</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="pl-60 flex-1 flex flex-col min-w-0">
+    <header class="h-16 border-b border-line bg-card/90 backdrop-blur sticky top-0 z-30 px-6 flex items-center gap-4">
+      <div class="relative flex-1 max-w-md">
+        <span class="icon absolute left-3 top-1/2 -translate-y-1/2 text-faint text-[18px]">search</span>
+        <input type="text" placeholder="Buscar automações..." class="w-full h-9 pl-9 pr-3 bg-surface-2 rounded-lg text-sm placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+      </div>
+      <div class="ml-auto flex items-center gap-3">
+        <span class="hidden lg:flex items-center gap-1.5 text-xs text-muted font-mono"><span class="w-1.5 h-1.5 rounded-full bg-success"></span> engine ativa</span>
+        <button class="relative w-9 h-9 rounded-lg hover:bg-surface-2 text-muted flex items-center justify-center transition-colors" aria-label="Notificações" onclick="location.href='../notificacoes/notificacoes.html'">
+          <span class="icon text-[20px]">notifications</span><span class="absolute top-2 right-2 w-1.5 h-1.5 bg-danger rounded-full"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="p-6 flex flex-col gap-5 w-full">
+
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0"><h1 class="text-xl font-semibold tracking-tight truncate">Automações</h1><span class="badge bg-success-soft text-success"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>9 ativas</span></div>
+        <div class="flex items-center gap-2">
+          <button class="btn-secondary" type="button" onclick="setTab('historico')"><span class="icon text-[16px]">history</span> Ver histórico</button>
+          <button class="btn-primary" type="button" onclick="mockAction(this,'Editor visual aberto em nova aba')"><span class="icon text-[16px]">add</span> Nova automação</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Automações ativas</span><span class="text-xl font-semibold font-mono">9</span><span class="text-xs text-muted">de 12 criadas</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Execuções (24h)</span><span class="text-xl font-semibold font-mono">1.482</span><span class="text-xs text-success">+6.1% vs ontem</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Taxa de sucesso</span><span class="text-xl font-semibold font-mono">99.1%</span><span class="text-xs text-muted">14 falhas hoje</span></div>
+        <div class="card flex flex-col gap-1.5 !p-4"><span class="eyebrow">Horas economizadas</span><span class="text-xl font-semibold font-mono">126h</span><span class="text-xs text-muted">estimativa mensal</span></div>
+      </div>
+
+      <div class="flex items-center gap-1 bg-surface-2 p-1 rounded-lg w-fit overflow-x-auto">
+        <button class="tab-btn tab-active" data-tab="ativas" onclick="setTab('ativas')">Ativas</button>
+        <button class="tab-btn tab-inactive" data-tab="modelos" onclick="setTab('modelos')">Modelos</button>
+        <button class="tab-btn tab-inactive" data-tab="historico" onclick="setTab('historico')">Histórico de Execuções</button>
+      </div>
+
+      <!-- TAB: Ativas -->
+      <div data-tabpanel="ativas" class="is-active flex flex-col gap-3">
+        <div class="card flex items-center gap-4 flex-wrap">
+          <label class="switch bg-success"><input type="checkbox" checked class="sr-only peer" onchange="toggleAuto(this,'Reatribuir conversões Stripe → Meta Ads')"><span class="absolute h-4 w-4 bg-white rounded-full translate-x-4 top-0.5"></span></label>
+          <div class="min-w-0 flex-1"><h3 class="text-sm font-semibold">Reatribuir conversões Stripe → Meta Ads</h3><p class="text-xs text-muted">Gatilho: discrepância detectada pela Orbit AI · Ação: atualizar CRM</p></div>
+          <span class="badge bg-success-soft text-success">99% sucesso</span>
+          <span class="text-xs font-mono text-faint w-28 text-right">há 8 min</span>
+          <button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Abrindo editor da automação')">Editar</button>
+        </div>
+        <div class="card flex items-center gap-4 flex-wrap">
+          <label class="switch bg-success"><input type="checkbox" checked class="sr-only peer" onchange="toggleAuto(this,'Alertar risco de churn')"><span class="absolute h-4 w-4 bg-white rounded-full translate-x-4 top-0.5"></span></label>
+          <div class="min-w-0 flex-1"><h3 class="text-sm font-semibold">Alertar risco de churn</h3><p class="text-xs text-muted">Gatilho: health score &lt; 70 · Ação: notificar Slack + criar tarefa</p></div>
+          <span class="badge bg-success-soft text-success">100% sucesso</span>
+          <span class="text-xs font-mono text-faint w-28 text-right">há 32 min</span>
+          <button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Abrindo editor da automação')">Editar</button>
+        </div>
+        <div class="card flex items-center gap-4 flex-wrap">
+          <label class="switch bg-success"><input type="checkbox" checked class="sr-only peer" onchange="toggleAuto(this,'Sincronizar novo lead CRM → Planilha')"><span class="absolute h-4 w-4 bg-white rounded-full translate-x-4 top-0.5"></span></label>
+          <div class="min-w-0 flex-1"><h3 class="text-sm font-semibold">Sincronizar novo lead CRM → Planilha</h3><p class="text-xs text-muted">Gatilho: novo negócio no Hubspot · Ação: append no Google Sheets</p></div>
+          <span class="badge bg-success-soft text-success">98% sucesso</span>
+          <span class="text-xs font-mono text-faint w-28 text-right">há 2 min</span>
+          <button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Abrindo editor da automação')">Editar</button>
+        </div>
+        <div class="card flex items-center gap-4 flex-wrap">
+          <label class="switch bg-success"><input type="checkbox" checked class="sr-only peer" onchange="toggleAuto(this,'Backup diário Postgres → S3')"><span class="absolute h-4 w-4 bg-white rounded-full translate-x-4 top-0.5"></span></label>
+          <div class="min-w-0 flex-1"><h3 class="text-sm font-semibold">Backup diário Postgres → S3</h3><p class="text-xs text-muted">Gatilho: cron 02:00 · Ação: snapshot + verificação de integridade</p></div>
+          <span class="badge bg-success-soft text-success">100% sucesso</span>
+          <span class="text-xs font-mono text-faint w-28 text-right">há 6h</span>
+          <button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Abrindo editor da automação')">Editar</button>
+        </div>
+        <div class="card flex items-center gap-4 flex-wrap">
+          <label class="switch bg-line"><input type="checkbox" class="sr-only peer" onchange="toggleAuto(this,'Auditoria semanal de permissões')"><span class="absolute h-4 w-4 bg-white rounded-full translate-x-0.5 top-0.5"></span></label>
+          <div class="min-w-0 flex-1"><h3 class="text-sm font-semibold text-muted">Auditoria semanal de permissões</h3><p class="text-xs text-muted">Gatilho: cron segunda 08:00 · Ação: relatório RBAC por e-mail</p></div>
+          <span class="badge bg-surface-2 text-muted">Pausada</span>
+          <span class="text-xs font-mono text-faint w-28 text-right">há 5 dias</span>
+          <button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Abrindo editor da automação')">Editar</button>
+        </div>
+      </div>
+
+      <!-- TAB: Modelos -->
+      <div data-tabpanel="modelos" class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div class="card flex flex-col gap-3 items-start"><div class="w-10 h-10 rounded-lg bg-primary-soft text-primary flex items-center justify-center"><span class="icon text-[20px]">forum</span></div><div><h3 class="text-sm font-semibold">Notificar Slack em anomalia</h3><p class="text-xs text-muted mt-1">Dispara mensagem quando Orbit AI detecta uma anomalia crítica.</p></div><button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Modelo aplicado, configure os detalhes')">Usar modelo</button></div>
+          <div class="card flex flex-col gap-3 items-start"><div class="w-10 h-10 rounded-lg bg-success-soft text-success flex items-center justify-center"><span class="icon text-[20px]">sync_alt</span></div><div><h3 class="text-sm font-semibold">Sincronizar CRM ↔ Planilha</h3><p class="text-xs text-muted mt-1">Mantém negócios do CRM espelhados em uma planilha compartilhada.</p></div><button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Modelo aplicado, configure os detalhes')">Usar modelo</button></div>
+          <div class="card flex flex-col gap-3 items-start"><div class="w-10 h-10 rounded-lg bg-accent-soft text-accent flex items-center justify-center"><span class="icon text-[20px]">backup</span></div><div><h3 class="text-sm font-semibold">Backup automático</h3><p class="text-xs text-muted mt-1">Agenda snapshots recorrentes de qualquer fonte conectada.</p></div><button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Modelo aplicado, configure os detalhes')">Usar modelo</button></div>
+          <div class="card flex flex-col gap-3 items-start"><div class="w-10 h-10 rounded-lg bg-warning-soft text-warning flex items-center justify-center"><span class="icon text-[20px]">warning</span></div><div><h3 class="text-sm font-semibold">Alertar SLA de integração</h3><p class="text-xs text-muted mt-1">Avisa a equipe quando latência ou erro ultrapassa o limite.</p></div><button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Modelo aplicado, configure os detalhes')">Usar modelo</button></div>
+          <div class="card flex flex-col gap-3 items-start"><div class="w-10 h-10 rounded-lg bg-primary-soft text-primary flex items-center justify-center"><span class="icon text-[20px]">mark_email_read</span></div><div><h3 class="text-sm font-semibold">Relatório semanal por e-mail</h3><p class="text-xs text-muted mt-1">Envia o resumo executivo automaticamente toda segunda-feira.</p></div><button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Modelo aplicado, configure os detalhes')">Usar modelo</button></div>
+          <div class="card flex flex-col gap-3 items-start"><div class="w-10 h-10 rounded-lg bg-accent-soft text-accent flex items-center justify-center"><span class="icon text-[20px]">auto_awesome</span></div><div><h3 class="text-sm font-semibold">Follow-up com IA</h3><p class="text-xs text-muted mt-1">Dispara mensagens personalizadas para leads parados no funil.</p></div><button class="btn-secondary !h-8 text-xs w-full mt-auto" onclick="mockAction(this,'Modelo aplicado, configure os detalhes')">Usar modelo</button></div>
+        </div>
+      </div>
+
+      <!-- TAB: Histórico -->
+      <div data-tabpanel="historico" class="flex flex-col gap-4">
+        <div class="card flex flex-col gap-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h2 class="text-sm font-semibold">Histórico de Execuções</h2>
+            <button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'CSV exportado')"><span class="icon text-[16px]">download</span> Exportar CSV</button>
+          </div>
+          <div class="overflow-x-auto -mx-5">
+            <table class="w-full text-left text-sm min-w-[680px]">
+              <thead><tr class="text-[11px] uppercase text-faint font-semibold border-b border-line"><th data-sort class="py-2 px-5" onclick="sortTableBy(this)">Timestamp</th><th class="py-2 px-5">Automação</th><th class="py-2 px-5">Resultado</th><th data-sort class="py-2 px-5 text-right" onclick="sortTableBy(this)">Duração</th></tr></thead>
+              <tbody class="divide-y divide-line font-mono text-xs">
+                <tr><td class="py-3 px-5 text-muted" data-sort="6">há 8 min</td><td class="py-3 px-5 font-sans font-medium text-ink">Reatribuir conversões Stripe → Meta Ads</td><td class="py-3 px-5"><span class="badge bg-success-soft text-success font-sans">Sucesso</span></td><td class="py-3 px-5 text-right" data-sort="420">420ms</td></tr>
+                <tr><td class="py-3 px-5 text-muted" data-sort="32">há 32 min</td><td class="py-3 px-5 font-sans font-medium text-ink">Alertar risco de churn</td><td class="py-3 px-5"><span class="badge bg-success-soft text-success font-sans">Sucesso</span></td><td class="py-3 px-5 text-right" data-sort="180">180ms</td></tr>
+                <tr><td class="py-3 px-5 text-muted" data-sort="120">há 2h</td><td class="py-3 px-5 font-sans font-medium text-ink">Sincronizar novo lead CRM → Planilha</td><td class="py-3 px-5"><span class="badge bg-danger-soft text-danger font-sans">Falha</span></td><td class="py-3 px-5 text-right" data-sort="5200">timeout</td></tr>
+                <tr><td class="py-3 px-5 text-muted" data-sort="360">há 6h</td><td class="py-3 px-5 font-sans font-medium text-ink">Backup diário Postgres → S3</td><td class="py-3 px-5"><span class="badge bg-success-soft text-success font-sans">Sucesso</span></td><td class="py-3 px-5 text-right" data-sort="18400">18.4s</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div id="toast-root" class="fixed bottom-5 right-5 z-[300] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<script>
+  window.addEventListener('load', function () { setTimeout(function () { var el = document.getElementById('skel-overlay'); if (!el) return; el.style.opacity = '0'; setTimeout(function () { el.remove(); }, 350); }, 550); });
+  function toast(message, type) {
+    type = type || 'success'; var root = document.getElementById('toast-root'); var el = document.createElement('div');
+    var colors = { success: 'bg-success text-white', error: 'bg-danger text-white', info: 'bg-primary text-white' };
+    var icons = { success: 'check_circle', error: 'error', info: 'info' };
+    el.className = 'pointer-events-auto px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium flex items-center gap-2 ' + (colors[type] || colors.success);
+    el.style.cssText = 'opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;';
+    el.innerHTML = '<span class="icon text-[16px]">' + (icons[type] || icons.success) + '</span><span>' + message + '</span>';
+    root.appendChild(el); requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+    setTimeout(function () { el.style.opacity = '0'; el.style.transform = 'translateY(6px)'; setTimeout(function () { el.remove(); }, 300); }, 3000);
+  }
+  function mockAction(btn, message, opts) {
+    opts = opts || {}; if (btn.dataset.loading === '1') return;
+    btn.dataset.loading = '1'; var original = btn.innerHTML; btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>' + (opts.loadingText ? '<span>' + opts.loadingText + '</span>' : '<span>Processando...</span>');
+    setTimeout(function () { btn.innerHTML = original; btn.disabled = false; btn.dataset.loading = '0'; if (message) toast(message, opts.type); if (opts.after) opts.after(); }, opts.delay || 900);
+  }
+  function setTab(name) {
+    document.querySelectorAll('[data-tabpanel]').forEach(function (el) { el.classList.toggle('is-active', el.dataset.tabpanel === name); });
+    document.querySelectorAll('[data-tab]').forEach(function (btn) { var active = btn.dataset.tab === name; btn.classList.toggle('tab-active', active); btn.classList.toggle('tab-inactive', !active); });
+  }
+  function sortTableBy(th) {
+    var table = th.closest('table'); var tbody = table.tBodies[0]; var idx = th.cellIndex; var asc = th.dataset.dir !== 'asc';
+    Array.from(table.tHead.rows[0].cells).forEach(function (c) { c.dataset.dir = ''; var i = c.querySelector('.sort-ind'); if (i) i.remove(); });
+    th.dataset.dir = asc ? 'asc' : 'desc';
+    var rows = Array.from(tbody.rows);
+    rows.sort(function (a, b) {
+      var ac = a.cells[idx], bc = b.cells[idx];
+      var av = ac.dataset.sort !== undefined ? ac.dataset.sort : ac.textContent.trim();
+      var bv = bc.dataset.sort !== undefined ? bc.dataset.sort : bc.textContent.trim();
+      var an = parseFloat(av), bn = parseFloat(bv);
+      var cmp = (!isNaN(an) && !isNaN(bn)) ? an - bn : av.localeCompare(bv);
+      return asc ? cmp : -cmp;
+    });
+    rows.forEach(function (r) { tbody.appendChild(r); });
+    var ind = document.createElement('span'); ind.className = 'sort-ind text-[10px] ml-1'; ind.textContent = asc ? '▲' : '▼'; th.appendChild(ind);
+  }
+  function toggleAuto(input, name) {
+    var label = input.closest('label');
+    label.classList.toggle('bg-success', input.checked); label.classList.toggle('bg-line', !input.checked);
+    var span = label.querySelector('span'); span.classList.toggle('translate-x-4', input.checked); span.classList.toggle('translate-x-0.5', !input.checked);
+    var card = input.closest('.card'); var h3 = card.querySelector('h3'); var badge = card.querySelector('.badge');
+    h3.classList.toggle('text-muted', !input.checked);
+    badge.textContent = input.checked ? '100% sucesso' : 'Pausada';
+    badge.className = 'badge ' + (input.checked ? 'bg-success-soft text-success' : 'bg-surface-2 text-muted');
+    toast(name + (input.checked ? ' ativada' : ' pausada'), input.checked ? 'success' : 'info');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Orbit — Dashboard Operacional</title>
+<link rel="icon" type="image/png" href="../../marca/logo-whale.png"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..24,400..500,0..1,0" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: "#0b1120", muted: "#5b6178", faint: "#94a0c0", line: "#e4e7f6",
+          surface: "#f7f8fd", "surface-2": "#eef0fa", card: "#ffffff",
+          primary: "#1f0faf", "primary-dark": "#170b86", "primary-soft": "#ecebfd",
+          accent: "#7c3aed", "accent-soft": "#f2ebfe",
+          success: "#059669", "success-soft": "#e7f8f1",
+          warning: "#d97706", "warning-soft": "#fef3e0",
+          danger: "#dc2626", "danger-soft": "#fdeaea"
+        },
+        fontFamily: { sans: ["Sora", "sans-serif"], mono: ["JetBrains Mono", "monospace"] }
+      }
+    }
+  };
+</script>
+<style>
+  * { font-family: 'Sora', sans-serif; }
+  code, .font-mono { font-family: 'JetBrains Mono', monospace; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d7dcf0; border-radius: 4px; }
+  [data-tabpanel] { display: none !important; }
+  [data-tabpanel].is-active { display: flex !important; }
+  button, .navlink, a[href], [role="button"], select, summary, .tab-btn { cursor: pointer; }
+  input[type="checkbox"], input[type="radio"] { cursor: pointer; }
+  th[data-sort] { cursor: pointer; user-select: none; }
+  @keyframes skel-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .skel { background: linear-gradient(90deg,#eef0fa,#e2e6f8,#eef0fa); background-size: 200% 100%; animation: skel-shimmer 1.4s ease-in-out infinite; }
+  #skel-overlay { transition: opacity .35s ease; }
+</style>
+<style type="text/tailwindcss">
+  @layer components {
+    .card { @apply bg-card border border-line rounded-xl p-5; }
+    .eyebrow { @apply text-[11px] font-semibold uppercase tracking-wider text-faint; }
+    .btn { @apply inline-flex items-center justify-center gap-2 text-sm font-medium rounded-lg px-3.5 h-9 transition-colors whitespace-nowrap select-none disabled:opacity-60; }
+    .btn-primary { @apply btn bg-primary text-white hover:bg-primary-dark shadow-sm; }
+    .btn-secondary { @apply btn bg-white border border-line text-ink hover:bg-surface-2; }
+    .btn-danger { @apply btn bg-white border border-danger/30 text-danger hover:bg-danger-soft; }
+    .badge { @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap; }
+    .tab-btn { @apply px-3.5 h-9 inline-flex items-center text-sm font-medium rounded-lg transition-colors whitespace-nowrap; }
+    .tab-active { @apply bg-primary text-white shadow-sm; }
+    .tab-inactive { @apply text-muted hover:text-ink hover:bg-surface-2; }
+    .navlink { @apply flex items-center gap-3 px-3 h-10 rounded-lg text-sm font-medium transition-colors; }
+    .navlink-active { @apply bg-primary text-white shadow-sm; }
+    .navlink-inactive { @apply text-muted hover:bg-surface-2 hover:text-ink; }
+    .icon { font-family: 'Material Symbols Outlined'; font-size: 20px; line-height: 1; }
+    .spinner { @apply inline-block w-4 h-4 border-2 border-current/25 border-t-current rounded-full animate-spin align-[-3px]; }
+    .navgroup { @apply px-3 pt-4 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-faint; }
+  }
+</style>
+</head>
+<body class="bg-surface text-ink text-sm antialiased">
+
+<!-- Loading skeleton -->
+<div id="skel-overlay" class="fixed inset-0 z-[200] bg-surface flex" aria-hidden="true">
+  <div class="w-60 shrink-0 border-r border-line p-4 flex flex-col gap-2.5">
+    <div class="skel h-8 w-24 rounded-lg mb-4"></div>
+    <div class="skel h-9 rounded-lg"></div><div class="skel h-9 rounded-lg"></div><div class="skel h-9 rounded-lg"></div><div class="skel h-9 rounded-lg"></div>
+  </div>
+  <div class="flex-1 p-6 flex flex-col gap-4">
+    <div class="skel h-9 w-64 rounded-lg"></div>
+    <div class="grid grid-cols-4 gap-4"><div class="skel h-24 rounded-xl"></div><div class="skel h-24 rounded-xl"></div><div class="skel h-24 rounded-xl"></div><div class="skel h-24 rounded-xl"></div></div>
+    <div class="skel h-64 rounded-xl"></div>
+  </div>
+</div>
+
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-60 shrink-0 fixed top-0 bottom-0 left-0 bg-card border-r border-line flex flex-col z-40">
+    <a href="../../index.html" class="h-16 px-5 flex items-center gap-2.5 border-b border-line shrink-0 no-underline">
+      <img src="../../marca/logo-whale.png" alt="Orbit" class="h-8 w-auto"/>
+      <span class="text-base font-bold tracking-tight text-ink">Orbit</span>
+    </a>
+
+    <nav class="flex flex-col gap-1 px-3 flex-1 overflow-y-auto pb-3">
+      <div class="navgroup">Principal</div>
+      <a class="navlink navlink-active" href="dashboard.html"><span class="icon">space_dashboard</span> Dashboard</a>
+      <a class="navlink navlink-inactive" href="../integracoes/integracoes.html"><span class="icon">hub</span> Integrações <span class="ml-auto text-[11px] font-mono text-faint">5</span></a>
+      <a class="navlink navlink-inactive" href="../documentos/documentos.html"><span class="icon">description</span> Documentos</a>
+      <a class="navlink navlink-inactive" href="../construtor/construtor.html"><span class="icon">dashboard_customize</span> Construtor</a>
+      <a class="navlink navlink-inactive" href="../automacoes/automacoes.html"><span class="icon">account_tree</span> Automações</a>
+      <a class="navlink navlink-inactive" href="../orbit-ai/orbit-ai.html"><span class="icon">auto_awesome</span> Orbit AI</a>
+
+      <div class="navgroup">Workspace</div>
+      <a class="navlink navlink-inactive" href="../equipe/equipe.html"><span class="icon">group</span> Equipe</a>
+      <a class="navlink navlink-inactive" href="../notificacoes/notificacoes.html"><span class="icon">notifications</span> Notificações <span class="ml-auto text-[11px] font-mono bg-danger text-white rounded-full px-1.5">3</span></a>
+      <a class="navlink navlink-inactive" href="../configuracoes/configuracoes.html"><span class="icon">settings</span> Configurações</a>
+    </nav>
+
+    <div class="p-3 border-t border-line">
+      <button class="w-full flex items-center gap-2.5 p-2.5 rounded-lg bg-surface-2 hover:bg-surface-2/70 transition-colors text-left" onclick="toast('Menu de conta em breve','info')">
+        <img alt="Mariana Silva" class="w-8 h-8 rounded-full object-cover shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7Qkz1Tv4EfpRyRShckeOEcIZfnuvs-A9PpC8fBVvdqp_9b5vHxNriuq1T0e1Qwkn0smbc05WQOqKKhZNKsVXWrT9neXi62dis42MDRAgQ2QLIWFLqY5D_sXAXclM6e2v4ol0EmoViSlkJ_dFXqe89kuu3Ze-dLVivwu4xzthInrgZoLo0ChWXOw_R_AKQ0-FLEQS-sI2AeYZatgEX27IPquNiuIpoqgnXLU-eSTFx2lm6gsGazaNO"/>
+        <div class="min-w-0 flex-1">
+          <div class="text-xs font-semibold text-ink truncate">Mariana Silva</div>
+          <div class="text-[11px] text-faint truncate">Diretora de Operações</div>
+        </div>
+        <span class="icon text-[18px] text-faint">unfold_more</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="pl-60 flex-1 flex flex-col min-w-0">
+
+    <!-- Top bar -->
+    <header class="h-16 border-b border-line bg-card/90 backdrop-blur sticky top-0 z-30 px-6 flex items-center gap-4">
+      <div class="relative flex-1 max-w-md">
+        <span class="icon absolute left-3 top-1/2 -translate-y-1/2 text-faint text-[18px]">search</span>
+        <input id="global-search" type="text" placeholder="Buscar métricas, tabelas ou pipelines..." class="w-full h-9 pl-9 pr-3 bg-surface-2 rounded-lg text-sm placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+      </div>
+      <div class="ml-auto flex items-center gap-3">
+        <span class="hidden lg:flex items-center gap-1.5 text-xs text-muted font-mono"><span class="w-1.5 h-1.5 rounded-full bg-success"></span> sincronizado há 2 min</span>
+        <button class="relative w-9 h-9 rounded-lg hover:bg-surface-2 text-muted flex items-center justify-center transition-colors" aria-label="Notificações" onclick="location.href='../notificacoes/notificacoes.html'">
+          <span class="icon text-[20px]">notifications</span>
+          <span class="absolute top-2 right-2 w-1.5 h-1.5 bg-danger rounded-full"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="p-6 flex flex-col gap-5 w-full">
+
+      <!-- Page header -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <h1 class="text-xl font-semibold tracking-tight truncate">Dashboard Operacional</h1>
+          <span class="badge bg-success-soft text-success"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Sync ativo</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <button class="btn-secondary" type="button" onclick="toggleMenu('period-menu')">
+              <span class="icon text-[16px]">calendar_today</span> <span id="period-label">Últimos 30 dias</span> <span class="icon text-[16px]">expand_more</span>
+            </button>
+            <div id="period-menu" class="hidden absolute right-0 mt-1 w-44 bg-card border border-line rounded-lg shadow-lg z-20 p-1">
+              <button class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface-2" onclick="setPeriod('Últimos 7 dias')">Últimos 7 dias</button>
+              <button class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface-2" onclick="setPeriod('Últimos 30 dias')">Últimos 30 dias</button>
+              <button class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface-2" onclick="setPeriod('Este trimestre')">Este trimestre</button>
+              <button class="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-surface-2" onclick="setPeriod('Ano corrente')">Ano corrente</button>
+            </div>
+          </div>
+          <button class="btn-primary" type="button" onclick="mockAction(this,'Relatório exportado em PDF',{loadingText:'Exportando...'})">
+            <span class="icon text-[16px]">download</span> Exportar
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex items-center gap-1 bg-surface-2 p-1 rounded-lg w-fit overflow-x-auto">
+        <button class="tab-btn tab-active" data-tab="visao-geral" onclick="setTab('visao-geral')">Visão Geral</button>
+        <button class="tab-btn tab-inactive" data-tab="canais" onclick="setTab('canais')">Canais &amp; Receita</button>
+        <button class="tab-btn tab-inactive" data-tab="telemetria" onclick="setTab('telemetria')">Telemetria</button>
+        <button class="tab-btn tab-inactive" data-tab="relatorios" onclick="setTab('relatorios')">Relatórios</button>
+      </div>
+
+      <!-- Content grid: tabs (left) + AI copilot (right, persistent) -->
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5 items-start">
+
+        <div class="min-w-0 flex flex-col gap-5">
+
+          <!-- TAB: Visão Geral -->
+          <div data-tabpanel="visao-geral" class="is-active flex flex-col gap-5">
+
+            <!-- KPI grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-4 gap-4">
+              <div class="card flex flex-col gap-2">
+                <div class="flex items-center justify-between"><span class="eyebrow">Receita (ARR)</span><span class="icon text-primary text-[18px]">payments</span></div>
+                <span class="text-2xl font-semibold font-mono truncate">R$ 4,82M</span>
+                <span class="badge bg-success-soft text-success w-fit">+14.2%</span>
+              </div>
+              <div class="card flex flex-col gap-2">
+                <div class="flex items-center justify-between"><span class="eyebrow">Fontes Ativas</span><span class="icon text-primary text-[18px]">cable</span></div>
+                <span class="text-2xl font-semibold font-mono truncate">5 / 5</span>
+                <span class="badge bg-success-soft text-success w-fit">99.9% up</span>
+              </div>
+              <div class="card flex flex-col gap-2">
+                <div class="flex items-center justify-between"><span class="eyebrow">Registros / Dia</span><span class="icon text-primary text-[18px]">database</span></div>
+                <span class="text-2xl font-semibold font-mono truncate">142.8M</span>
+                <span class="badge bg-surface-2 text-muted w-fit">1.650 req/s</span>
+              </div>
+              <div class="card flex flex-col gap-2">
+                <div class="flex items-center justify-between"><span class="eyebrow">ROAS Consolidado</span><span class="icon text-primary text-[18px]">trending_up</span></div>
+                <span class="text-2xl font-semibold font-mono truncate">4.82x</span>
+                <span class="badge bg-success-soft text-success w-fit">CAC -18%</span>
+              </div>
+              <div class="card flex flex-col gap-2">
+                <div class="flex items-center justify-between"><span class="eyebrow">CAC Médio</span><span class="icon text-primary text-[18px]">point_of_sale</span></div>
+                <span class="text-2xl font-semibold font-mono truncate">R$ 142,80</span>
+                <span class="badge bg-success-soft text-success w-fit">-8.4%</span>
+              </div>
+              <div class="card flex flex-col gap-2">
+                <div class="flex items-center justify-between"><span class="eyebrow">LTV / CAC</span><span class="icon text-primary text-[18px]">insights</span></div>
+                <span class="text-2xl font-semibold font-mono truncate">4.8x</span>
+                <span class="badge bg-success-soft text-success w-fit">benchmark &gt;3x</span>
+              </div>
+              <div class="card flex flex-col gap-2">
+                <div class="flex items-center justify-between"><span class="eyebrow">Ticket Médio</span><span class="icon text-primary text-[18px]">shopping_cart</span></div>
+                <span class="text-2xl font-semibold font-mono truncate">R$ 1.840</span>
+                <span class="badge bg-success-soft text-success w-fit">+6.2%</span>
+              </div>
+              <div class="card flex flex-col gap-2">
+                <div class="flex items-center justify-between"><span class="eyebrow">Churn Mensal</span><span class="icon text-warning text-[18px]">trending_down</span></div>
+                <span class="text-2xl font-semibold font-mono truncate">1.2%</span>
+                <span class="badge bg-warning-soft text-warning w-fit">+0.3pp</span>
+              </div>
+            </div>
+
+            <!-- Chart card -->
+            <div class="card flex flex-col gap-4">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <h2 class="text-sm font-semibold truncate">Evolução de Conversão &amp; Volume</h2>
+                  <p class="text-xs text-muted mt-0.5">Meta Ads, checkout Stripe e base CRM comparados.</p>
+                </div>
+                <div class="flex items-center gap-1 bg-surface-2 p-1 rounded-lg shrink-0" id="chart-pills">
+                  <button class="tab-btn tab-active text-xs !h-8 !px-3" data-series="real" onclick="setSeries('real')">Receita Real</button>
+                  <button class="tab-btn tab-inactive text-xs !h-8 !px-3" data-series="proj" onclick="setSeries('proj')">Projeção IA</button>
+                  <button class="tab-btn tab-inactive text-xs !h-8 !px-3" data-series="sync" onclick="setSeries('sync')">Sincronia DB</button>
+                </div>
+              </div>
+
+              <div class="w-full">
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted mb-2">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-primary"></span>Receita Real</span>
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-accent"></span>Meta Ads</span>
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-cyan-600"></span>Projeção IA</span>
+                  <span class="font-mono text-ink ml-auto" id="chart-peak">Pico: R$ 242.000/dia</span>
+                </div>
+                <svg class="w-full h-[190px]" preserveAspectRatio="none" viewBox="0 0 800 200">
+                  <defs>
+                    <linearGradient id="ga1" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1f0faf" stop-opacity="0.20"/><stop offset="100%" stop-color="#1f0faf" stop-opacity="0"/></linearGradient>
+                    <linearGradient id="ga2" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#7c3aed" stop-opacity="0.16"/><stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/></linearGradient>
+                  </defs>
+                  <line x1="0" x2="800" y1="40" y2="40" stroke="#eef0fa" stroke-width="1" stroke-dasharray="4 4"/>
+                  <line x1="0" x2="800" y1="90" y2="90" stroke="#eef0fa" stroke-width="1" stroke-dasharray="4 4"/>
+                  <line x1="0" x2="800" y1="140" y2="140" stroke="#eef0fa" stroke-width="1" stroke-dasharray="4 4"/>
+                  <polyline id="chart-dashed" fill="none" points="0,120 120,105 240,95 360,65 480,70 600,45 720,38 800,20" stroke="#0891b2" stroke-dasharray="5 5" stroke-width="2"/>
+                  <polygon id="chart-area-2" fill="url(#ga2)" points="0,160 120,140 240,130 360,110 480,95 600,85 720,60 800,45 800,200 0,200"/>
+                  <polyline id="chart-line-2" fill="none" points="0,160 120,140 240,130 360,110 480,95 600,85 720,60 800,45" stroke="#7c3aed" stroke-width="2.5"/>
+                  <polygon id="chart-area-1" fill="url(#ga1)" points="0,175 120,150 240,120 360,85 480,75 600,50 720,40 800,25 800,200 0,200"/>
+                  <polyline id="chart-line-1" fill="none" points="0,175 120,150 240,120 360,85 480,75 600,50 720,40 800,25" stroke="#1f0faf" stroke-width="3"/>
+                  <circle cx="800" cy="25" r="5" fill="#0891b2" stroke="#fff" stroke-width="2"/>
+                </svg>
+                <div class="flex justify-between text-[11px] font-mono text-faint mt-1">
+                  <span>01 Jun</span><span>08 Jun</span><span>15 Jun</span><span>22 Jun</span><span>Hoje</span>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-2.5 p-3 rounded-lg bg-accent-soft">
+                <span class="icon text-accent text-[18px] shrink-0">auto_awesome</span>
+                <p class="text-xs text-ink leading-relaxed"><strong class="text-accent">Orbit AI:</strong> picos de conversão entre terças e quintas (14h–18h). Disparos de CRM 2h antes aumentam +24.8% as vendas no Stripe.</p>
+                <button class="text-xs font-semibold text-accent hover:underline shrink-0 ml-auto" onclick="mockAction(this,'Regra de automação criada')">Configurar</button>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3 pt-1 border-t border-line">
+                <div class="pt-3"><div class="text-[11px] text-muted">Ticket Médio</div><div class="text-sm font-semibold font-mono">R$ 1.840</div></div>
+                <div class="pt-3"><div class="text-[11px] text-muted">Conversão Geral</div><div class="text-sm font-semibold font-mono">3.94%</div></div>
+                <div class="pt-3"><div class="text-[11px] text-muted">Confiabilidade</div><div class="text-sm font-semibold font-mono">99.98%</div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TAB: Canais & Receita -->
+          <div data-tabpanel="canais" class="flex flex-col gap-5">
+            <div class="card flex flex-col gap-4">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <h2 class="text-sm font-semibold">Performance por Canal e Integração</h2>
+                <div class="flex items-center gap-2">
+                  <input type="text" placeholder="Filtrar canal..." class="h-8 px-3 bg-surface-2 rounded-lg text-xs placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-primary/30" oninput="filterTable(this,'#tbl-canais')"/>
+                  <button class="btn-secondary !h-8 text-xs" type="button" onclick="mockAction(this,'CSV exportado com 5 canais',{loadingText:'Gerando...'})">
+                    <span class="icon text-[16px]">download</span> Exportar CSV
+                  </button>
+                </div>
+              </div>
+              <div class="overflow-x-auto -mx-5">
+                <table class="w-full text-left text-sm min-w-[760px]" id="tbl-canais">
+                  <thead>
+                    <tr class="text-[11px] uppercase text-faint font-semibold border-b border-line">
+                      <th data-sort class="py-2 px-5 font-semibold" onclick="sortTableBy(this)">Canal</th>
+                      <th class="py-2 px-5 font-semibold">Fonte</th>
+                      <th class="py-2 px-5 font-semibold">Status</th>
+                      <th data-sort class="py-2 px-5 font-semibold text-right" onclick="sortTableBy(this)">Volume</th>
+                      <th data-sort class="py-2 px-5 font-semibold text-right" onclick="sortTableBy(this)">Conversão</th>
+                      <th data-sort class="py-2 px-5 font-semibold text-right" onclick="sortTableBy(this)">Receita</th>
+                      <th class="py-2 px-5 font-semibold text-center">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-line">
+                    <tr class="hover:bg-surface-2/60">
+                      <td class="py-3 px-5 font-medium">Meta Ads Campaign</td>
+                      <td class="py-3 px-5 font-mono text-xs text-muted">Marketing API v19</td>
+                      <td class="py-3 px-5"><span class="badge bg-success-soft text-success">Conectado</span></td>
+                      <td class="py-3 px-5 text-right font-mono text-xs" data-sort="8420">8.420 leads</td>
+                      <td class="py-3 px-5 text-right font-semibold text-success" data-sort="5.42">5.42%</td>
+                      <td class="py-3 px-5 text-right font-semibold" data-sort="1940200">R$ 1,94M</td>
+                      <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-primary hover:underline" onclick="mockAction(this,'Sincronização iniciada')">Sincronizar</button></td>
+                    </tr>
+                    <tr class="hover:bg-surface-2/60">
+                      <td class="py-3 px-5 font-medium">Stripe Payments</td>
+                      <td class="py-3 px-5 font-mono text-xs text-muted">Webhooks &amp; Events</td>
+                      <td class="py-3 px-5"><span class="badge bg-success-soft text-success">Conectado</span></td>
+                      <td class="py-3 px-5 text-right font-mono text-xs" data-sort="19840">19.840 tx</td>
+                      <td class="py-3 px-5 text-right font-semibold" data-sort="98.1">98.1% aprov.</td>
+                      <td class="py-3 px-5 text-right font-semibold" data-sort="1620000">R$ 1,62M</td>
+                      <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-primary hover:underline" onclick="mockAction(this,'Sincronização iniciada')">Sincronizar</button></td>
+                    </tr>
+                    <tr class="hover:bg-surface-2/60">
+                      <td class="py-3 px-5 font-medium">PostgreSQL DB</td>
+                      <td class="py-3 px-5 font-mono text-xs text-muted">Direct Read Replica</td>
+                      <td class="py-3 px-5"><span class="badge bg-success-soft text-success">Conectado</span></td>
+                      <td class="py-3 px-5 text-right font-mono text-xs" data-sort="114500000">114.5M rows</td>
+                      <td class="py-3 px-5 text-right font-semibold" data-sort="100">100% integr.</td>
+                      <td class="py-3 px-5 text-right font-semibold text-muted" data-sort="0">Dados Master</td>
+                      <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-primary hover:underline" onclick="mockAction(this,'Sincronização iniciada')">Sincronizar</button></td>
+                    </tr>
+                    <tr class="hover:bg-surface-2/60">
+                      <td class="py-3 px-5 font-medium">CRM Deals &amp; Funil</td>
+                      <td class="py-3 px-5 font-mono text-xs text-muted">Hubspot REST API</td>
+                      <td class="py-3 px-5"><span class="badge bg-success-soft text-success">Conectado</span></td>
+                      <td class="py-3 px-5 text-right font-mono text-xs" data-sort="2140">2.140 negócios</td>
+                      <td class="py-3 px-5 text-right font-semibold text-success" data-sort="22.4">22.4% win</td>
+                      <td class="py-3 px-5 text-right font-semibold" data-sort="1260000">R$ 1,26M</td>
+                      <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-primary hover:underline" onclick="mockAction(this,'Sincronização iniciada')">Sincronizar</button></td>
+                    </tr>
+                    <tr class="hover:bg-surface-2/60">
+                      <td class="py-3 px-5 font-medium">Google Sheets</td>
+                      <td class="py-3 px-5 font-mono text-xs text-muted">Spreadsheets Sync v4</td>
+                      <td class="py-3 px-5"><span class="badge bg-warning-soft text-warning">2 min atrás</span></td>
+                      <td class="py-3 px-5 text-right font-mono text-xs" data-sort="34">34 planilhas</td>
+                      <td class="py-3 px-5 text-right font-semibold text-muted" data-sort="0">—</td>
+                      <td class="py-3 px-5 text-right font-semibold text-muted" data-sort="0">N/A</td>
+                      <td class="py-3 px-5 text-center"><button class="text-xs font-semibold text-primary hover:underline" onclick="mockAction(this,'Sincronização iniciada')">Sincronizar</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: Telemetria -->
+          <div data-tabpanel="telemetria" class="flex flex-col gap-5">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="card !p-4 flex flex-col gap-1.5"><span class="eyebrow">p50 latência</span><span class="text-xl font-semibold font-mono">38ms</span></div>
+              <div class="card !p-4 flex flex-col gap-1.5"><span class="eyebrow">p95 latência</span><span class="text-xl font-semibold font-mono">142ms</span></div>
+              <div class="card !p-4 flex flex-col gap-1.5"><span class="eyebrow">p99 latência</span><span class="text-xl font-semibold font-mono">410ms</span></div>
+              <div class="card !p-4 flex flex-col gap-1.5"><span class="eyebrow">Erro (24h)</span><span class="text-xl font-semibold font-mono text-success">0.02%</span></div>
+            </div>
+            <div class="card flex flex-col gap-4">
+              <h2 class="text-sm font-semibold">Saúde por Serviço</h2>
+              <div class="overflow-x-auto -mx-5">
+                <table class="w-full text-left text-sm min-w-[720px]">
+                  <thead><tr class="text-[11px] uppercase text-faint font-semibold border-b border-line">
+                    <th class="py-2 px-5">Serviço</th><th class="py-2 px-5 text-right">Uptime</th><th class="py-2 px-5 text-right">p95</th><th class="py-2 px-5 text-right">Throughput</th><th class="py-2 px-5 text-right">Erros/min</th><th class="py-2 px-5">Região</th>
+                  </tr></thead>
+                  <tbody class="divide-y divide-line font-mono text-xs">
+                    <tr><td class="py-3 px-5 font-sans font-medium">api-gateway</td><td class="py-3 px-5 text-right text-success">99.99%</td><td class="py-3 px-5 text-right">62ms</td><td class="py-3 px-5 text-right">1.650 rps</td><td class="py-3 px-5 text-right">0.01</td><td class="py-3 px-5 font-sans">sa-east-1</td></tr>
+                    <tr><td class="py-3 px-5 font-sans font-medium">ingestion-worker</td><td class="py-3 px-5 text-right text-success">99.97%</td><td class="py-3 px-5 text-right">118ms</td><td class="py-3 px-5 text-right">980 rps</td><td class="py-3 px-5 text-right">0.04</td><td class="py-3 px-5 font-sans">sa-east-1</td></tr>
+                    <tr><td class="py-3 px-5 font-sans font-medium">postgres-primary</td><td class="py-3 px-5 text-right text-success">100%</td><td class="py-3 px-5 text-right">8ms</td><td class="py-3 px-5 text-right">3.8k ops/s</td><td class="py-3 px-5 text-right">0.00</td><td class="py-3 px-5 font-sans">sa-east-1</td></tr>
+                    <tr><td class="py-3 px-5 font-sans font-medium">orbit-ai-inference</td><td class="py-3 px-5 text-right text-warning">99.82%</td><td class="py-3 px-5 text-right">640ms</td><td class="py-3 px-5 text-right">42 req/s</td><td class="py-3 px-5 text-right">0.18</td><td class="py-3 px-5 font-sans">us-east-1</td></tr>
+                    <tr><td class="py-3 px-5 font-sans font-medium">webhook-relay</td><td class="py-3 px-5 text-right text-success">99.95%</td><td class="py-3 px-5 text-right">54ms</td><td class="py-3 px-5 text-right">210 rps</td><td class="py-3 px-5 text-right">0.02</td><td class="py-3 px-5 font-sans">sa-east-1</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: Relatórios -->
+          <div data-tabpanel="relatorios" class="flex flex-col gap-4">
+            <div class="flex items-start gap-2.5 p-3 rounded-lg bg-accent-soft">
+              <span class="icon text-accent text-[18px] shrink-0">auto_awesome</span>
+              <p class="text-xs text-ink leading-relaxed flex-1"><strong class="text-accent">Orbit AI:</strong> gere um relatório executivo personalizado a partir dos dados atuais.</p>
+              <button class="btn-primary !h-8 text-xs shrink-0" onclick="mockAction(this,'Relatório gerado com Orbit AI',{loadingText:'Gerando...',delay:1400})">Gerar com IA</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="card flex items-center justify-between gap-3">
+                <div class="min-w-0"><h3 class="text-sm font-semibold truncate">Resumo Executivo Semanal</h3><p class="text-xs text-muted mt-0.5">Atualizado toda segunda · PDF</p></div>
+                <div class="flex gap-2 shrink-0"><button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Download iniciado')">Baixar</button><button class="btn-secondary !h-8 !px-2" onclick="mockAction(this,'Envio agendado')"><span class="icon text-[16px]">schedule_send</span></button></div>
+              </div>
+              <div class="card flex items-center justify-between gap-3">
+                <div class="min-w-0"><h3 class="text-sm font-semibold truncate">Relatório de Churn &amp; Retenção</h3><p class="text-xs text-muted mt-0.5">Mensal · PDF + CSV</p></div>
+                <div class="flex gap-2 shrink-0"><button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Download iniciado')">Baixar</button><button class="btn-secondary !h-8 !px-2" onclick="mockAction(this,'Envio agendado')"><span class="icon text-[16px]">schedule_send</span></button></div>
+              </div>
+              <div class="card flex items-center justify-between gap-3">
+                <div class="min-w-0"><h3 class="text-sm font-semibold truncate">ROI de Canais de Aquisição</h3><p class="text-xs text-muted mt-0.5">Quinzenal · PDF</p></div>
+                <div class="flex gap-2 shrink-0"><button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Download iniciado')">Baixar</button><button class="btn-secondary !h-8 !px-2" onclick="mockAction(this,'Envio agendado')"><span class="icon text-[16px]">schedule_send</span></button></div>
+              </div>
+              <div class="card flex items-center justify-between gap-3">
+                <div class="min-w-0"><h3 class="text-sm font-semibold truncate">Auditoria de Integridade de Dados</h3><p class="text-xs text-muted mt-0.5">Diário · CSV técnico</p></div>
+                <div class="flex gap-2 shrink-0"><button class="btn-secondary !h-8 text-xs" onclick="mockAction(this,'Download iniciado')">Baixar</button><button class="btn-secondary !h-8 !px-2" onclick="mockAction(this,'Envio agendado')"><span class="icon text-[16px]">schedule_send</span></button></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AI Copilot (persistent) -->
+        <aside class="card flex flex-col gap-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center shrink-0"><span class="icon text-[18px]">auto_awesome</span></div>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold truncate">Orbit AI Copilot</h3>
+              <p class="text-[11px] text-accent font-medium">Diagnóstico cruzado · agora</p>
+            </div>
+            <a href="../orbit-ai/orbit-ai.html" class="ml-auto text-xs font-semibold text-primary hover:underline shrink-0">Abrir hub</a>
+          </div>
+
+          <p class="text-xs text-muted leading-relaxed">Cruzou <strong class="text-ink">142.8M registros</strong> entre Stripe, Meta Ads e CRM. 2 recomendações de 1 clique.</p>
+
+          <div class="flex flex-col gap-3">
+            <div class="p-3 rounded-lg border border-line flex flex-col gap-2">
+              <div class="flex items-center justify-between gap-2"><span class="text-xs font-semibold">Discrepância Stripe × Meta</span><span class="badge bg-warning-soft text-warning shrink-0">Atenção</span></div>
+              <p class="text-xs text-muted leading-relaxed">24 conversões no Stripe sem atribuição no pixel por atraso de webhook.</p>
+              <button class="btn-primary !h-8 text-xs w-full" type="button" onclick="mockAction(this,'Conversões reatribuídas com sucesso')">Reatribuir</button>
+            </div>
+            <div class="p-3 rounded-lg border border-line flex flex-col gap-2">
+              <div class="flex items-center justify-between gap-2"><span class="text-xs font-semibold">Coluna nova no Sheets</span><span class="badge bg-accent-soft text-accent shrink-0">Schema</span></div>
+              <p class="text-xs text-muted leading-relaxed"><code class="text-[11px] bg-surface-2 px-1 py-0.5 rounded">cac_ajustado_q3</code> sem mapeamento no Postgres.</p>
+              <button class="btn-secondary !h-8 text-xs w-full" type="button" onclick="mockAction(this,'Coluna criada no banco de dados')">Criar coluna</button>
+            </div>
+            <div class="p-3 rounded-lg border border-line flex flex-col gap-2">
+              <div class="flex items-center justify-between gap-2"><span class="text-xs font-semibold">Leads parados no CRM</span><span class="badge bg-success-soft text-success shrink-0">Oportunidade</span></div>
+              <p class="text-xs text-muted leading-relaxed">84 leads de alta propensão sem contato há 48h. Ganho potencial +R$115k.</p>
+              <button class="btn-secondary !h-8 text-xs w-full" type="button" onclick="mockAction(this,'Follow-up disparado para 84 leads')">Disparar follow-up</button>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-line flex flex-col gap-2">
+            <label for="copilot-input" class="text-xs font-semibold">Pergunte aos dados</label>
+            <div class="relative">
+              <input id="copilot-input" type="text" placeholder="Ex: menor CAC no Stripe?" class="w-full h-9 pl-3 pr-9 bg-surface-2 rounded-lg text-xs placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+              <button id="btn-copilot-ask" class="absolute right-1 top-1 w-7 h-7 bg-primary text-white rounded-md flex items-center justify-center hover:bg-primary-dark transition-colors" aria-label="Perguntar"><span class="icon text-[16px]">arrow_forward</span></button>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-root" class="fixed bottom-5 right-5 z-[300] flex flex-col gap-2 items-end pointer-events-none"></div>
+
+<script>
+  // ---- Skeleton overlay ----
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      var el = document.getElementById('skel-overlay');
+      if (!el) return;
+      el.style.opacity = '0';
+      setTimeout(function () { el.remove(); }, 350);
+    }, 550);
+  });
+
+  // ---- Dropdown menus ----
+  function toggleMenu(id) {
+    document.querySelectorAll('[id$="-menu"]').forEach(function (m) { if (m.id !== id) m.classList.add('hidden'); });
+    document.getElementById(id).classList.toggle('hidden');
+  }
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.relative')) document.querySelectorAll('[id$="-menu"]').forEach(function (m) { m.classList.add('hidden'); });
+  });
+  function setPeriod(label) {
+    document.getElementById('period-label').textContent = label;
+    document.getElementById('period-menu').classList.add('hidden');
+    toast('Período atualizado para "' + label + '"', 'info');
+  }
+
+  // ---- Toast ----
+  function toast(message, type) {
+    type = type || 'success';
+    var root = document.getElementById('toast-root');
+    var el = document.createElement('div');
+    var colors = { success: 'bg-success text-white', error: 'bg-danger text-white', info: 'bg-primary text-white' };
+    var icons = { success: 'check_circle', error: 'error', info: 'info' };
+    el.className = 'pointer-events-auto px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium flex items-center gap-2 ' + (colors[type] || colors.success);
+    el.style.cssText = 'opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;';
+    el.innerHTML = '<span class="icon text-[16px]">' + (icons[type] || icons.success) + '</span><span>' + message + '</span>';
+    root.appendChild(el);
+    requestAnimationFrame(function () { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+    setTimeout(function () {
+      el.style.opacity = '0'; el.style.transform = 'translateY(6px)';
+      setTimeout(function () { el.remove(); }, 300);
+    }, 3000);
+  }
+
+  // ---- Generic mock async action for buttons ----
+  function mockAction(btn, message, opts) {
+    opts = opts || {};
+    if (btn.dataset.loading === '1') return;
+    btn.dataset.loading = '1';
+    var original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>' + (opts.loadingText ? '<span>' + opts.loadingText + '</span>' : '<span>Processando...</span>');
+    setTimeout(function () {
+      btn.innerHTML = original;
+      btn.disabled = false;
+      btn.dataset.loading = '0';
+      if (message) toast(message, opts.type);
+      if (opts.after) opts.after();
+    }, opts.delay || 900);
+  }
+
+  // ---- Tabs ----
+  function setTab(name) {
+    document.querySelectorAll('[data-tabpanel]').forEach(function (el) { el.classList.toggle('is-active', el.dataset.tabpanel === name); });
+    document.querySelectorAll('[data-tab]').forEach(function (btn) {
+      var active = btn.dataset.tab === name;
+      btn.classList.toggle('tab-active', active); btn.classList.toggle('tab-inactive', !active);
+    });
+  }
+
+  // ---- Chart series switch ----
+  var seriesData = {
+    real: { line1: "0,175 120,150 240,120 360,85 480,75 600,50 720,40 800,25", area1: "0,175 120,150 240,120 360,85 480,75 600,50 720,40 800,25 800,200 0,200", peak: "Pico: R$ 242.000/dia" },
+    proj: { line1: "0,160 120,130 240,110 360,90 480,60 600,35 720,22 800,10", area1: "0,160 120,130 240,110 360,90 480,60 600,35 720,22 800,10 800,200 0,200", peak: "Projeção: R$ 268.000/dia" },
+    sync: { line1: "0,180 120,165 240,150 360,120 480,110 600,90 720,70 800,55", area1: "0,180 120,165 240,150 360,120 480,110 600,90 720,70 800,55 800,200 0,200", peak: "Sincronia: 99.98% confiável" }
+  };
+  function setSeries(key) {
+    document.querySelectorAll('#chart-pills [data-series]').forEach(function (b) {
+      var active = b.dataset.series === key;
+      b.classList.toggle('tab-active', active); b.classList.toggle('tab-inactive', !active);
+    });
+    var d = seriesData[key];
+    document.getElementById('chart-line-1').setAttribute('points', d.line1);
+    document.getElementById('chart-area-1').setAttribute('points', d.area1);
+    document.getElementById('chart-peak').textContent = d.peak;
+  }
+
+  // ---- Table sort ----
+  function sortTableBy(th) {
+    var table = th.closest('table'); var tbody = table.tBodies[0]; var idx = th.cellIndex;
+    var asc = th.dataset.dir !== 'asc';
+    Array.from(table.tHead.rows[0].cells).forEach(function (c) { c.dataset.dir = ''; var i = c.querySelector('.sort-ind'); if (i) i.remove(); });
+    th.dataset.dir = asc ? 'asc' : 'desc';
+    var rows = Array.from(tbody.rows);
+    rows.sort(function (a, b) {
+      var ac = a.cells[idx], bc = b.cells[idx];
+      var av = ac.dataset.sort !== undefined ? ac.dataset.sort : ac.textContent.trim();
+      var bv = bc.dataset.sort !== undefined ? bc.dataset.sort : bc.textContent.trim();
+      var an = parseFloat(av), bn = parseFloat(bv);
+      var cmp = (!isNaN(an) && !isNaN(bn)) ? an - bn : av.localeCompare(bv);
+      return asc ? cmp : -cmp;
+    });
+    rows.forEach(function (r) { tbody.appendChild(r); });
+    var ind = document.createElement('span'); ind.className = 'sort-ind text-[10px] ml-1'; ind.textContent = asc ? '▲' : '▼';
+    th.appendChild(ind);
+  }
+
+  // ---- Table filter ----
+  function filterTable(input, tableSel) {
+    var q = input.value.toLowerCase();
+    document.querySelectorAll(tableSel + ' tbody tr').forEach(function (row) {
+      row.style.display = row.textContent.toLowerCase().indexOf(q) !== -1 ? '' : 'none';
+    });
+  }
+
+  // ---- Copilot input ----
+  document.getElementById('btn-copilot-ask')?.addEventListener('click', function () {
+    var input = document.getElementById('copilot-input');
+    if (input && input.value.trim() !== '') {
+      var q = input.value; input.value = 'Processando...'; input.disabled = true;
+      setTimeout(function () { input.value = ''; input.placeholder = 'Respondido: "' + q.substring(0, 20) + '..."'; input.disabled = false; }, 900);
+    }
+  });
+  document.getElementById('copilot-input')?.addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('btn-copilot-ask').click(); });
+
+  // ---- Global search (demo) ----
+  document.getElementById('global-search')?.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && this.value.trim()) { toast('Buscando por "' + this.value + '"...', 'info'); }
+  });
+</script>
+
+</body>
+</html>
